@@ -1,0 +1,70 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "level1alt.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "background.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "environment.tsx": {
+            "scaleInDock": 4,
+            "scaleInEditor": 4
+        },
+        "level1.tmx": {
+            "scale": 4,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 121,
+                "y": 81
+            }
+        },
+        "level1.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "level1alt.tmx": {
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 193.5,
+                "y": 98.5
+            }
+        }
+    },
+    "last.externalTilesetPath": "D:/kevin/Documents/Projects/School/AP Computer Science A/parkourmaster/maps",
+    "last.imagePath": "D:/kevin/Documents/Projects/School/AP Computer Science A/parkourmaster/maps",
+    "map.height": 20,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "map.width": 50,
+    "openFiles": [
+        "level1alt.tmx",
+        "environment.tsx",
+        "background.tsx"
+    ],
+    "project": "parkourmaster.tiled-project",
+    "property.type": "object",
+    "recentFiles": [
+        "background.tsx",
+        "environment.tsx",
+        "level1alt.tmx",
+        "level1.tmx",
+        "level1.tsx"
+    ],
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    }
+}
