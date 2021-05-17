@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level1alt.tmx",
+    "activeFile": "level1.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -20,11 +20,11 @@
             "scaleInEditor": 4
         },
         "level1.tmx": {
-            "scale": 4,
+            "scale": 3,
             "selectedLayer": 1,
             "viewCenter": {
-                "x": 121,
-                "y": 81
+                "x": 292,
+                "y": 71.66666666666667
             }
         },
         "level1.tsx": {
@@ -48,17 +48,17 @@
     "map.tileWidth": 8,
     "map.width": 50,
     "openFiles": [
-        "level1alt.tmx",
         "environment.tsx",
-        "background.tsx"
+        "background.tsx",
+        "level1.tmx"
     ],
     "project": "parkourmaster.tiled-project",
     "property.type": "object",
     "recentFiles": [
-        "background.tsx",
         "environment.tsx",
-        "level1alt.tmx",
+        "background.tsx",
         "level1.tmx",
+        "level1alt.tmx",
         "level1.tsx"
     ],
     "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
