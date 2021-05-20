@@ -2,7 +2,7 @@ TODO:
 
 Problems:
 
-It seems that the animation doesn't work.
+X Direction collision bugged
 
 Character cannot jump.
 

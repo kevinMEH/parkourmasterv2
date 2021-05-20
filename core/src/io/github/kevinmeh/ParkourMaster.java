@@ -38,22 +38,35 @@ public class ParkourMaster extends Game {
 
 		Vector2 position = new Vector2();
 		Vector2 velocity = new Vector2();
+		Rectangle bounds;
+		
 		State state = State.IDLE;
 		float stateTime = 0;
 		boolean grounded = false;
 		Direction direction = Direction.RIGHT;
+		
+		void setBounds(float width, float height) {
+			bounds = new Rectangle(position.x - width / 2, position.y - height/2, width, height);
+		}
+		
+		void updateBounds(float x, float y) {
+			bounds.x = x;
+			bounds.y = y;
+		}
+		
+		void updateBounds() {
+			bounds.x = position.x;
+			bounds.y = position.y;
+		}
 	}
 	
 	// DECLARE VARIABLES HERE
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera camera;
-	// TEXTURES: FACING RIGHT
-	private Texture agentPurpleWalk;
-	private Texture agentPurpleIdle;
 	
-	private Animation<TextureRegion> idleAnimation;
-	private Animation<TextureRegion> walkAnimation;
+	private Animation<TextureRegion> agentPurpleIdle;
+	private Animation<TextureRegion> agentPurpleWalk;
 	// TODO: Add jumping animation
 	
 	private AgentPurple agentPurple;
@@ -66,7 +79,7 @@ public class ParkourMaster extends Game {
 	private Array<Rectangle> tiles = new Array<Rectangle>();
 	
 	// FIXME: Agent Purple passing through blocks. Temp set to 0.
-	static final float GRAVITY = -0f;
+	static final float GRAVITY = -2f;
 	
 	private static boolean debug = false;
 	private ShapeRenderer debugRenderer;
@@ -77,28 +90,27 @@ public class ParkourMaster extends Game {
 	// YOU MUST INITIALIZE VARIABLES INSIDE CREATE()
 	@Override
 	public void create() {
-		agentPurpleIdle = new Texture("sprites/agentPurple-idle-right.png");
-		agentPurpleWalk = new Texture("sprites/agentPurple-walk-right.png");
-		
-		TextureRegion[][] idleTextureRegion = TextureRegion.split(agentPurpleIdle, 22, 22);
-		TextureRegion[][] walkTextureRegion = TextureRegion.split(agentPurpleWalk, 22, 22);
-		
-		idleAnimation = new Animation(0.5f, idleTextureRegion[0][0], idleTextureRegion[1][0]);
-		walkAnimation = new Animation(0.25f, walkTextureRegion[0][0], walkTextureRegion[1][0], walkTextureRegion[0][1], walkTextureRegion[1][0]);
-		
-		idleAnimation.setPlayMode(Animation.PlayMode.LOOP);
-		walkAnimation.setPlayMode(Animation.PlayMode.LOOP);
-		
+		Texture texture = new Texture("sprites/agentPurple.png");
+		TextureRegion[] textureRegion = TextureRegion.split(texture, 15, 22)[0];
+		agentPurpleIdle = new Animation<>(0.5f, textureRegion[0], textureRegion[1]);
+		agentPurpleWalk = new Animation<>(0.25f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
+		agentPurpleIdle.setPlayMode(Animation.PlayMode.LOOP);
+		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
+
 		// 1 UNIT = 8 PIXELS
+		AgentPurple.WIDTH = textureRegion[0].getRegionWidth() / 8f;
+		AgentPurple.HEIGHT = textureRegion[0].getRegionHeight() / 8f;
+		
 		map = new TmxMapLoader().load("maps/level1.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / 8f);
+
+		agentPurple = new AgentPurple();
+		agentPurple.position = new Vector2(15, 20);
+		agentPurple.setBounds(AgentPurple.WIDTH, AgentPurple.HEIGHT);
 		
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 32, 18);
+		camera.setToOrtho(false, 20, 20);
 		camera.update();
-		
-		agentPurple = new AgentPurple();
-		agentPurple.position = new Vector2(15, 30);
 		
 		debugRenderer = new ShapeRenderer();
 	}
@@ -110,12 +122,13 @@ public class ParkourMaster extends Game {
 		
 		// Delta time = time between current frame and last frame in seconds.
 		float deltaTime = Gdx.graphics.getDeltaTime();
+		
 		// Update agent purple. Process input, detect collision, update position.
 		update(deltaTime);
 		
 		// Camera follows agent purple
 		camera.position.x = agentPurple.position.x;
-		camera.position.y = agentPurple.position.y - 20;
+		camera.position.y = agentPurple.position.y;
 		camera.update();
 		
 		// TiledMapRenderer based on what camera sees. Render map.
@@ -142,7 +155,7 @@ public class ParkourMaster extends Game {
 
 		// Checking input
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && agentPurple.grounded) {
-			agentPurple.velocity.y = agentPurple.velocity.y + AgentPurple.JUMP_VELOCITY;
+			agentPurple.velocity.y = AgentPurple.JUMP_VELOCITY;
 			agentPurple.state = AgentPurple.State.JUMP;
 			agentPurple.grounded = false;
 		}
@@ -173,7 +186,7 @@ public class ParkourMaster extends Game {
 			if(agentPurple.grounded) agentPurple.state = AgentPurple.State.IDLE;
 		}
 
-		// Multiply by time to see how far we go. FIXME...?
+		// Multiply by time to see how far we go.
 		// Why are we scaling the velocity? Shouldn't we scale the position or distance?
 		agentPurple.velocity.scl(deltaTime);
 		
@@ -231,12 +244,12 @@ public class ParkourMaster extends Game {
 		rectanglePool.free(agentPurpleRect);
 		
 		// unscale velocity
-		// FIXME...?
 		agentPurple.position.add(agentPurple.velocity);
 		agentPurple.velocity.scl(1 / deltaTime);
 		
-		// FIXME
 		agentPurple.velocity.x *= AgentPurple.DAMPING;
+		
+		agentPurple.updateBounds();
 	}
 	
 	private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles) {
@@ -261,13 +274,16 @@ public class ParkourMaster extends Game {
 		
 		switch(agentPurple.state) {
 			case IDLE:
-				animation = idleAnimation.getKeyFrame(agentPurple.stateTime);
+				animation = agentPurpleIdle.getKeyFrame(agentPurple.stateTime);
 				break;
 			case WALK:
-				animation = walkAnimation.getKeyFrame(agentPurple.stateTime);
+				animation = agentPurpleWalk.getKeyFrame(agentPurple.stateTime);
 				break;
 			case JUMP:
-				// TODO:
+				animation = agentPurpleIdle.getKeyFrame(agentPurple.stateTime);
+				break;
+			case DEAD:
+				animation = agentPurpleIdle.getKeyFrame(agentPurple.stateTime);
 				break;
 		}
 
