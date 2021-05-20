@@ -32,8 +32,8 @@ public class ParkourMaster extends Game {
 		// 1 UNIT = 8 PIXELS
 		static float WIDTH;
 		static float HEIGHT; // Defines collision box
-		static float MAX_VELOCITY = 5f;
-		static float JUMP_VELOCITY = 1f;
+		static float MAX_VELOCITY = 7.2f;
+		static float JUMP_VELOCITY = 30f;
 		static float DAMPING = 0.87f; // Dampening velocity
 
 		Vector2 position = new Vector2();
@@ -93,7 +93,7 @@ public class ParkourMaster extends Game {
 		Texture texture = new Texture("sprites/agentPurple.png");
 		TextureRegion[] textureRegion = TextureRegion.split(texture, 15, 22)[0];
 		agentPurpleIdle = new Animation<>(0.5f, textureRegion[0], textureRegion[1]);
-		agentPurpleWalk = new Animation<>(0.25f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
+		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
 		agentPurpleIdle.setPlayMode(Animation.PlayMode.LOOP);
 		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
 
@@ -109,7 +109,7 @@ public class ParkourMaster extends Game {
 		agentPurple.setBounds(AgentPurple.WIDTH, AgentPurple.HEIGHT);
 		
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 20, 20);
+		camera.setToOrtho(false, 30, 18);
 		camera.update();
 		
 		debugRenderer = new ShapeRenderer();
@@ -155,7 +155,7 @@ public class ParkourMaster extends Game {
 
 		// Checking input
 		if(Gdx.input.isKeyPressed(Input.Keys.SPACE) && agentPurple.grounded) {
-			agentPurple.velocity.y = AgentPurple.JUMP_VELOCITY;
+			agentPurple.velocity.y = agentPurple.velocity.y + AgentPurple.JUMP_VELOCITY;
 			agentPurple.state = AgentPurple.State.JUMP;
 			agentPurple.grounded = false;
 		}
