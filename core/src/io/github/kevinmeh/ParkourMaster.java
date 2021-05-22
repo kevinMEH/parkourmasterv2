@@ -28,6 +28,8 @@ public class ParkourMaster extends Game {
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera camera;
+	private float mapHeight;
+	private float mapWidth;
 	
 	private Animation<TextureRegion> agentPurpleIdle;
 	private Animation<TextureRegion> agentPurpleWalk;
@@ -65,12 +67,14 @@ public class ParkourMaster extends Game {
 		
 		map = new TmxMapLoader().load("maps/level1.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / 8f);
+		mapWidth = map.getProperties().get("width", Integer.class);
+		mapHeight = map.getProperties().get("height", Integer.class);
 
 		agentPurple = new AgentPurple();
 		agentPurple.setPosition(new Vector2(7, 7));
 		
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 30, 18);
+		camera.setToOrtho(false, 32, 18);
 		camera.update();
 		
 		debugRenderer = new ShapeRenderer();
@@ -90,6 +94,24 @@ public class ParkourMaster extends Game {
 		// Camera follows agent purple
 		camera.position.x = agentPurple.getPosition().x;
 		camera.position.y = agentPurple.getPosition().y;
+		
+		// Clamping camera to map:
+		// There are 2 rectangles: The map and the camera. 
+		// If the camera goes outside the map, set camera to be on the edge of map.
+		float cameraLeft = camera.position.x - camera.viewportWidth / 2;
+		float cameraRight = camera.position.x + camera.viewportWidth / 2;
+		float cameraBottom = camera.position.y - camera.viewportHeight / 2;
+		float cameraTop = camera.position.y + camera.viewportHeight / 2;
+		
+		if(cameraLeft <= 0)
+			camera.position.x = camera.viewportWidth / 2;
+		if(cameraRight >= mapWidth)
+			camera.position.x = mapWidth - camera.viewportWidth / 2;
+		if(cameraBottom <= 0)
+			camera.position.y = camera.viewportHeight / 2;
+		if(cameraTop >= mapHeight)
+			camera.position.y = mapHeight - camera.viewportHeight / 2;
+		
 		camera.update();
 		
 		// TiledMapRenderer based on what camera sees. Render map.

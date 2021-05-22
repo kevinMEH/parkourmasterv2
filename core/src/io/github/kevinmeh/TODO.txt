@@ -7,5 +7,5 @@ TODO:
     Add grass
     
 FIXME:
-    Clamp camera to map
     Fix acceleration
+    Stop agent from falling off map
