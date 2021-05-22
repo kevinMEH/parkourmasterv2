@@ -1,0 +1,11 @@
+TODO:
+    Add enemies
+    Add gun
+    Add enemy damage
+    Add tutorial
+    Add multiple levels
+    Add grass
+    
+FIXME:
+    Clamp camera to map
+    Add acceleration to agent
