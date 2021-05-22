@@ -67,7 +67,7 @@ public class ParkourMaster extends Game {
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / 8f);
 
 		agentPurple = new AgentPurple();
-		agentPurple.setPosition(new Vector2(15, 20));
+		agentPurple.setPosition(new Vector2(7, 7));
 		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 30, 18);
@@ -118,12 +118,12 @@ public class ParkourMaster extends Game {
 			agentPurple.setGrounded(false);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-			agentPurple.getVelocity().x = agentPurple.getVelocity().x - AgentPurple.MAX_VELOCITY;
+			agentPurple.getVelocity().x = agentPurple.getVelocity().x - AgentPurple.ACCELERATION;
 			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
 			agentPurple.setDirection(AgentPurple.Direction.LEFT);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			agentPurple.getVelocity().x = agentPurple.getVelocity().x + AgentPurple.MAX_VELOCITY;
+			agentPurple.getVelocity().x = agentPurple.getVelocity().x + AgentPurple.ACCELERATION;
 			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
 			agentPurple.setDirection(AgentPurple.Direction.RIGHT);
 		}
@@ -144,7 +144,6 @@ public class ParkourMaster extends Game {
 		}
 
 		// Multiply by time to see how far we go.
-		// Why are we scaling the velocity? Shouldn't we scale the position or distance?
 		agentPurple.getVelocity().scl(deltaTime);
 		
 		// Collision detection and response
@@ -152,13 +151,13 @@ public class ParkourMaster extends Game {
 		// INFO: Sprite coordinate starts from bottom left, hence why we have to add the sprite's WIDTH if it is going right.
 		// This is also why we're adding the sprite's height to endY.
 		Rectangle agentPurpleRect = rectanglePool.obtain();
-		agentPurpleRect.set(agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.WIDTH - 0.4f, AgentPurple.HEIGHT);
+		agentPurpleRect.set(agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.WIDTH - 0.5f, AgentPurple.HEIGHT);
 		// Bounds to check for collision boxes
 		int startX, startY, endX, endY;
 		if(agentPurple.getVelocity().x > 0) { // If moving right, add width, else don't
 			startX = endX = (int)(agentPurple.getPosition().x + AgentPurple.WIDTH + agentPurple.getVelocity().x);
 		} else {
-			startX = endX = (int) (agentPurple.getPosition().x +  agentPurple.getVelocity().x);
+			startX = endX = (int) (agentPurple.getPosition().x + agentPurple.getVelocity().x);
 		}
 		startY = (int) (agentPurple.getPosition().y);
 		endY = (int) (agentPurple.getPosition().y + AgentPurple.HEIGHT);

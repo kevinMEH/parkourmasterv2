@@ -8,4 +8,4 @@ TODO:
     
 FIXME:
     Clamp camera to map
-    Add acceleration to agent
+    Fix acceleration

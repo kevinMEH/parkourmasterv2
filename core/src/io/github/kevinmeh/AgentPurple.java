@@ -11,6 +11,7 @@ public class AgentPurple {
     // 1 UNIT = 8 PIXELS
     final static float WIDTH = 15 / 8f;
     final static float HEIGHT = 22 / 8f; // Defines collision box
+    final static float ACCELERATION = 4f;
     final static float MAX_VELOCITY = 7.2f;
     final static float JUMP_VELOCITY = 30f;
     final static float DAMPING = 0.67f; // Dampening velocity
