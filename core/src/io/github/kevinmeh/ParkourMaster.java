@@ -44,40 +44,38 @@ public class ParkourMaster extends Game {
 	};
 	private Array<Rectangle> tiles = new Array<>();
 	
-	// FIXME: Agent Purple passing through blocks. Temp set to 0.
-	static final float GRAVITY = -2f;
-	
 	private static boolean debug = false;
 	private ShapeRenderer debugRenderer;
 	
-	public static void debugMode(boolean bool) { debug = bool; }
-	public static boolean isDebugMode() { return debug; }
+	static final float GRAVITY = -1.5f;
 	
-	// YOU MUST INITIALIZE VARIABLES INSIDE CREATE()
 	@Override
 	public void create() {
-		Texture texture = new Texture("sprites/agentPurple.png");
-		TextureRegion[] textureRegion = TextureRegion.split(texture, 15, 22)[0];
-		agentPurpleIdle = new Animation<>(0.5f, textureRegion[0], textureRegion[1]);
-		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
-		agentPurpleIdle.setPlayMode(Animation.PlayMode.LOOP);
-		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
-		
 		// NOTE: 1 Unit = 8 Pixels
-		
 		map = new TmxMapLoader().load("maps/level1.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / 8f);
 		mapWidth = map.getProperties().get("width", Integer.class);
 		mapHeight = map.getProperties().get("height", Integer.class);
 
-		agentPurple = new AgentPurple();
-		agentPurple.setPosition(new Vector2(7, 7));
+		loadAgentPurple();
 		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 32, 18);
 		camera.update();
 		
 		debugRenderer = new ShapeRenderer();
+	}
+	
+	void loadAgentPurple() {
+		Texture texture = new Texture("sprites/agentPurple.png");
+		TextureRegion[] textureRegion = TextureRegion.split(texture, 15, 22)[0];
+		agentPurpleIdle = new Animation<>(0.5f, textureRegion[0], textureRegion[1]);
+		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
+		agentPurpleIdle.setPlayMode(Animation.PlayMode.LOOP);
+		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
+
+		agentPurple = new AgentPurple();
+		agentPurple.setPosition(new Vector2(7, 7));
 	}
 
 	@Override
@@ -89,7 +87,7 @@ public class ParkourMaster extends Game {
 		float deltaTime = Gdx.graphics.getDeltaTime();
 		
 		// Update agent purple. Process input, detect collision, update position.
-		update(deltaTime);
+		updateAgent(deltaTime);
 		
 		// Camera follows agent purple
 		camera.position.x = agentPurple.getPosition().x;
@@ -125,7 +123,7 @@ public class ParkourMaster extends Game {
 		if(debug) renderDebug();
 	}
 
-	public void update(float deltaTime) {
+	public void updateAgent(float deltaTime) {
 		if(deltaTime == 0) return;
 
 		if(deltaTime > 0.1f)
@@ -140,51 +138,50 @@ public class ParkourMaster extends Game {
 			agentPurple.setGrounded(false);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-			agentPurple.getVelocity().x = agentPurple.getVelocity().x - AgentPurple.ACCELERATION;
+			agentPurple.getVelocity().x = agentPurple.getVelocity().x - AgentPurple.MAX_VELOCITY;
 			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
 			agentPurple.setDirection(AgentPurple.Direction.LEFT);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			agentPurple.getVelocity().x = agentPurple.getVelocity().x + AgentPurple.ACCELERATION;
+			agentPurple.getVelocity().x = agentPurple.getVelocity().x + AgentPurple.MAX_VELOCITY;
 			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
 			agentPurple.setDirection(AgentPurple.Direction.RIGHT);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.B)) {
-			ParkourMaster.debugMode(!ParkourMaster.isDebugMode());
+			debug = !debug;
 		}
-
-		// Apply gravity
+		
 		agentPurple.getVelocity().add(0, ParkourMaster.GRAVITY);
-
-		// If velocity greater than max, set to max
+		
 		agentPurple.getVelocity().x = MathUtils.clamp(agentPurple.getVelocity().x, -AgentPurple.MAX_VELOCITY, AgentPurple.MAX_VELOCITY);
-
-		// If velocity less than 0.5, set to 0 and set state to IDLE.
-		if(Math.abs(agentPurple.getVelocity().x) < 0.5f) {
+		
+		if(Math.abs(agentPurple.getVelocity().x) < 0.25f) {
 			agentPurple.getVelocity().x = 0;
 			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.IDLE);
 		}
-
-		// Multiply by time to see how far we go.
+		
 		agentPurple.getVelocity().scl(deltaTime);
 		
 		// Collision detection and response
+		
 		// Checks the direction agent is moving and find collision boxes and compare it with agent's bounding box.
-		// INFO: Sprite coordinate starts from bottom left, hence why we have to add the sprite's WIDTH if it is going right.
-		// This is also why we're adding the sprite's height to endY.
+		// INFO: Sprite coordinate starts from bottom left, hence why we have to add the sprite's width if it is going right.
 		Rectangle agentPurpleRect = rectanglePool.obtain();
-		agentPurpleRect.set(agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.WIDTH - 0.5f, AgentPurple.HEIGHT);
+		agentPurpleRect.set(agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.COLLISION_WIDTH, AgentPurple.COLLISION_HEIGHT);
+		
 		// Bounds to check for collision boxes
 		int startX, startY, endX, endY;
-		if(agentPurple.getVelocity().x > 0) { // If moving right, add width, else don't
-			startX = endX = (int)(agentPurple.getPosition().x + AgentPurple.WIDTH + agentPurple.getVelocity().x);
+		
+		if(agentPurple.getVelocity().x > 0) {
+			startX = endX = (int) (agentPurple.getPosition().x + AgentPurple.COLLISION_WIDTH + agentPurple.getVelocity().x);
 		} else {
 			startX = endX = (int) (agentPurple.getPosition().x + agentPurple.getVelocity().x);
 		}
 		startY = (int) (agentPurple.getPosition().y);
-		endY = (int) (agentPurple.getPosition().y + AgentPurple.HEIGHT);
+		endY = (int) (agentPurple.getPosition().y + AgentPurple.COLLISION_HEIGHT);
 		
 		getTiles(startX, startY, endX, endY, tiles);
+		
 		agentPurpleRect.x += agentPurple.getVelocity().x;
 		
 		for(Rectangle tile : tiles) {
@@ -193,24 +190,25 @@ public class ParkourMaster extends Game {
 				break;
 			}
 		}
+		
 		agentPurpleRect.x = agentPurple.getPosition().x;
 		
 		// Up down collision checking
 		if(agentPurple.getVelocity().y > 0) {
-			startY = endY = (int) (agentPurple.getPosition().y + AgentPurple.HEIGHT + agentPurple.getVelocity().y);
+			startY = endY = (int) (agentPurple.getPosition().y + AgentPurple.COLLISION_HEIGHT + agentPurple.getVelocity().y);
 		} else {
 			startY = endY = (int) (agentPurple.getPosition().y + agentPurple.getVelocity().y);
 		}
-		// FIXME: What if agent purple is moving diagonally? Fix if it does not work.
 		startX = (int) (agentPurple.getPosition().x);
-		endX = (int) (agentPurple.getPosition().x + AgentPurple.WIDTH);
+		endX = (int) (agentPurple.getPosition().x + AgentPurple.COLLISION_WIDTH);
 		getTiles(startX, startY, endX, endY, tiles);
+		
 		agentPurpleRect.y += agentPurple.getVelocity().y;
+		
 		for(Rectangle tile : tiles) {
 			if(agentPurpleRect.overlaps(tile)) {
-				// Resets position to under tile
 				if(agentPurple.getVelocity().y > 0) 
-					agentPurple.getPosition().y = tile.y - AgentPurple.HEIGHT;
+					agentPurple.getPosition().y = tile.y - AgentPurple.COLLISION_HEIGHT;
 				else {
 					agentPurple.getPosition().y = tile.y + tile.height;
 					agentPurple.setGrounded(true);
@@ -219,7 +217,6 @@ public class ParkourMaster extends Game {
 				break;
 			}
 		}
-		rectanglePool.free(agentPurpleRect);
 		
 		// unscale velocity
 		agentPurple.getPosition().add(agentPurple.getVelocity());
@@ -227,6 +224,7 @@ public class ParkourMaster extends Game {
 		
 		agentPurple.getVelocity().x *= AgentPurple.DAMPING;
 	}
+	// TODO: Simplify collision detection and reuse for enemies.
 	
 	private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles) {
 		// Gets all tiles of layer "foreground" where all the collision boxes are supposed to be.
@@ -265,11 +263,10 @@ public class ParkourMaster extends Game {
 
 		Batch batch = renderer.getBatch();
 		batch.begin();
-		// FIXME: Try and flip animation...?
 		if(agentPurple.getDirection() == AgentPurple.Direction.RIGHT) {
-			batch.draw(animation, agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.WIDTH, AgentPurple.HEIGHT);
+			batch.draw(animation, agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, AgentPurple.DRAW_WIDTH, AgentPurple.DRAW_HEIGHT);
 		} else {
-			batch.draw(animation, agentPurple.getPosition().x + AgentPurple.WIDTH, agentPurple.getPosition().y, -AgentPurple.WIDTH, AgentPurple.HEIGHT);
+			batch.draw(animation, agentPurple.getDrawPosition().x + AgentPurple.DRAW_WIDTH, agentPurple.getDrawPosition().y, -AgentPurple.DRAW_WIDTH, AgentPurple.DRAW_HEIGHT);
 		}
 		batch.end();
 	}
@@ -278,15 +275,19 @@ public class ParkourMaster extends Game {
 		debugRenderer.setProjectionMatrix(camera.combined);
 		debugRenderer.begin(ShapeRenderer.ShapeType.Line);
 		
+		// Draw box
 		debugRenderer.setColor(Color.RED);
-		debugRenderer.rect(agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.WIDTH, AgentPurple.HEIGHT);
+		debugRenderer.rect(agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, AgentPurple.DRAW_WIDTH, AgentPurple.DRAW_HEIGHT);
+		
+		// Collision box
+		debugRenderer.setColor(Color.CORAL);
+		debugRenderer.rect(agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.COLLISION_WIDTH, AgentPurple.COLLISION_HEIGHT);
 		
 		debugRenderer.setColor(Color.BLUE);
 		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("foreground");
 		for(int y = 0; y <= layer.getHeight(); y++) {
 			for(int x = 0; x <= layer.getWidth(); x++) {
 				if(layer.getCell(x, y) != null) {
-					// FIXME...?
 					if(camera.frustum.boundsInFrustum(x + 0.5f, y + 0.5f, 0, 1, 1, 0))
 						debugRenderer.rect(x, y, 1, 1);
 				}
