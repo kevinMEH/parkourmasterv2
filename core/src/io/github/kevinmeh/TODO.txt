@@ -4,7 +4,8 @@ TODO:
     Add enemy damage
     Add tutorial
     Add multiple levels
-    Add grass
+    Add grass and trees and sun
+    Add parallax
     
 FIXME:
     Fix acceleration

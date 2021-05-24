@@ -1,32 +1,29 @@
 package io.github.kevinmeh;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
+public class AgentPurple extends Entity {
+    
+    static {
+        COLLISION_WIDTH = 8 / 8f;
+        COLLISION_HEIGHT = 22 / 8f;
+        
+        DRAW_WIDTH = 15 / 8f;
+        DRAW_HEIGHT = 22 / 8f;
+        
+        WIDTH_DIFF = (DRAW_WIDTH - COLLISION_WIDTH) / 2;
+        HEIGHT_DIFF = (DRAW_HEIGHT - COLLISION_HEIGHT) / 2;
+        
+        MAX_VELOCITY = 8f;
+    }
 
-public class AgentPurple {
+    final static float JUMP_VELOCITY = 35f;
+    final static float DAMPING = 0.77f; // Dampening velocity
 
     enum State { IDLE, WALK, JUMP, DEAD }
-    enum Direction { RIGHT, LEFT }
 
-    // 1 UNIT = 8 PIXELS
-    final static float WIDTH = 15 / 8f;
-    final static float HEIGHT = 22 / 8f; // Defines collision box
-    final static float ACCELERATION = 4f;
-    final static float MAX_VELOCITY = 7.2f;
-    final static float JUMP_VELOCITY = 30f;
-    final static float DAMPING = 0.67f; // Dampening velocity
-
-    private Vector2 position = new Vector2();
-    public void setPosition(Vector2 position) { this.position = position; }
-    public Vector2 getPosition() { return position; }
-    
-    private Vector2 velocity = new Vector2();
-    public Vector2 getVelocity() { return velocity; }
-    
     private State state = State.IDLE;
     public State getState() { return state; }
     public void setState(State state) { this.state = state; }
-    
+
     private float stateTime = 0;
     public float getStateTime() { return stateTime; }
     public void setStateTime(float stateTime) { this.stateTime = stateTime; }
@@ -34,8 +31,5 @@ public class AgentPurple {
     private boolean grounded = false;
     public boolean isGrounded() { return grounded; }
     public void setGrounded(boolean grounded) { this.grounded = grounded; }
-
-    private Direction direction = Direction.RIGHT;
-    public Direction getDirection() { return direction; }
-    public void setDirection(Direction direction) { this.direction = direction; }
+    
 }
