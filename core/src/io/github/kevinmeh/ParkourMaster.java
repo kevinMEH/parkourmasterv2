@@ -49,18 +49,20 @@ public class ParkourMaster extends Game {
 	
 	static final float GRAVITY = -1.5f;
 	
+	static final float TILE_SIZE = 8f;
+	
 	@Override
 	public void create() {
 		// NOTE: 1 Unit = 8 Pixels
 		map = new TmxMapLoader().load("maps/level1.tmx");
-		renderer = new OrthogonalTiledMapRenderer(map, 1 / 8f);
+		renderer = new OrthogonalTiledMapRenderer(map, 1 / TILE_SIZE);
 		mapWidth = map.getProperties().get("width", Integer.class);
 		mapHeight = map.getProperties().get("height", Integer.class);
 
 		loadAgentPurple();
 		
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 32, 18);
+		camera.setToOrtho(false, 16 * TILE_SIZE / 4, 9 * TILE_SIZE / 4);
 		camera.update();
 		
 		debugRenderer = new ShapeRenderer();
@@ -255,7 +257,7 @@ public class ParkourMaster extends Game {
 				Cell cell = layer.getCell(x, y);
 				if(cell != null) {
 					Rectangle rect = rectanglePool.obtain();
-					rect.set(x, y, 1, 1); // FIXME: Adjust to 8 if its pixel size and not tile size.
+					rect.set(x, y, 1, 1);
 					tiles.add(rect);
 				}
 			}
