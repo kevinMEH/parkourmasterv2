@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "level1.tmx",
+    "activeFile": "stage1.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -18,6 +18,10 @@
         "environment.tsx": {
             "scaleInDock": 4,
             "scaleInEditor": 4
+        },
+        "environmentv2.tsx": {
+            "scaleInDock": 5.5,
+            "scaleInEditor": 5.5
         },
         "level1.tmx": {
             "scale": 3,
@@ -38,6 +42,18 @@
                 "x": 193.5,
                 "y": 98.5
             }
+        },
+        "sky.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 1
+        },
+        "stage1.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 400.0909090909091,
+                "y": 115.0909090909091
+            }
         }
     },
     "last.externalTilesetPath": "D:/kevin/Documents/Projects/School/AP Computer Science A/parkourmaster/maps",
@@ -48,13 +64,16 @@
     "map.tileWidth": 4,
     "map.width": 150,
     "openFiles": [
-        "environment.tsx",
-        "background.tsx",
-        "level1.tmx"
+        "stage1.tmx",
+        "environmentv2.tsx",
+        "sky.tsx"
     ],
     "project": "parkourmaster.tiled-project",
     "property.type": "object",
     "recentFiles": [
+        "sky.tsx",
+        "environmentv2.tsx",
+        "stage1.tmx",
         "background.tsx",
         "environment.tsx",
         "level1.tmx",
