@@ -49,12 +49,12 @@ public class ParkourMaster extends Game {
 	
 	static final float GRAVITY = -1.5f;
 	
-	static final float TILE_SIZE = 8f;
+	static final float TILE_SIZE = 4f;
 	
 	@Override
 	public void create() {
 		// NOTE: 1 Unit = 8 Pixels
-		map = new TmxMapLoader().load("maps/level1.tmx");
+		map = new TmxMapLoader().load("maps/stage1.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / TILE_SIZE);
 		mapWidth = map.getProperties().get("width", Integer.class);
 		mapHeight = map.getProperties().get("height", Integer.class);
@@ -62,7 +62,7 @@ public class ParkourMaster extends Game {
 		loadAgentPurple();
 		
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 16 * TILE_SIZE / 4, 9 * TILE_SIZE / 4);
+		camera.setToOrtho(false, 32, 18);
 		camera.update();
 		
 		debugRenderer = new ShapeRenderer();
@@ -77,7 +77,7 @@ public class ParkourMaster extends Game {
 		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
 
 		agentPurple = new AgentPurple();
-		agentPurple.setPosition(new Vector2(7, 7));
+		agentPurple.setPosition(new Vector2(7, 11));
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class ParkourMaster extends Game {
 		
 		// Camera follows agent purple
 		camera.position.x = agentPurple.getPosition().x;
-		camera.position.y = agentPurple.getPosition().y;
+		camera.position.y = agentPurple.getPosition().y + 2;
 		
 		// Clamping camera to map:
 		// There are 2 rectangles: The map and the camera. 

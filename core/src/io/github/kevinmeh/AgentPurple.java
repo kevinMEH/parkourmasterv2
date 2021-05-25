@@ -3,11 +3,11 @@ package io.github.kevinmeh;
 public class AgentPurple extends Entity {
     
     static {
-        COLLISION_WIDTH = 8 / ParkourMaster.TILE_SIZE;
-        COLLISION_HEIGHT = 22 / ParkourMaster.TILE_SIZE;
+        COLLISION_WIDTH = 8 / (ParkourMaster.TILE_SIZE * 2);
+        COLLISION_HEIGHT = 22 / (ParkourMaster.TILE_SIZE * 2);
         
-        DRAW_WIDTH = 15 / ParkourMaster.TILE_SIZE;
-        DRAW_HEIGHT = 22 / ParkourMaster.TILE_SIZE;
+        DRAW_WIDTH = 15 / (ParkourMaster.TILE_SIZE * 2);
+        DRAW_HEIGHT = 22 / (ParkourMaster.TILE_SIZE * 2);
         
         WIDTH_DIFF = (DRAW_WIDTH - COLLISION_WIDTH) / 2;
         HEIGHT_DIFF = (DRAW_HEIGHT - COLLISION_HEIGHT) / 2;
