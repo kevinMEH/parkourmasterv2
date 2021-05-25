@@ -165,57 +165,19 @@ public class ParkourMaster extends Game {
 		// Collision detection and response
 		
 		// Checks the direction agent is moving and find collision boxes and compare it with agent's bounding box.
-		// INFO: Sprite coordinate starts from bottom left, hence why we have to add the sprite's width if it is going right.
-		Rectangle agentPurpleRect = rectanglePool.obtain();
-		agentPurpleRect.set(agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.COLLISION_WIDTH, AgentPurple.COLLISION_HEIGHT);
-		
-		// Bounds to check for collision boxes
-		int startX, startY, endX, endY;
-		
-		if(agentPurple.getVelocity().x > 0) {
-			startX = endX = (int) (agentPurple.getPosition().x + AgentPurple.COLLISION_WIDTH + agentPurple.getVelocity().x);
-		} else {
-			startX = endX = (int) (agentPurple.getPosition().x + agentPurple.getVelocity().x);
-		}
-		startY = (int) (agentPurple.getPosition().y);
-		endY = (int) (agentPurple.getPosition().y + AgentPurple.COLLISION_HEIGHT);
-		
-		getTiles(startX, startY, endX, endY, tiles);
-		
-		agentPurpleRect.x += agentPurple.getVelocity().x;
-		
-		for(Rectangle tile : tiles) {
-			if(agentPurpleRect.overlaps(tile)) {
-				agentPurple.getVelocity().x = 0;
-				break;
-			}
-		}
-		
-		agentPurpleRect.x = agentPurple.getPosition().x;
+		Rectangle xTile = xCollides(agentPurple, getxTiles(agentPurple));
+		if(xTile != null) agentPurple.getVelocity().x = 0;
 		
 		// Up down collision checking
-		if(agentPurple.getVelocity().y > 0) {
-			startY = endY = (int) (agentPurple.getPosition().y + AgentPurple.COLLISION_HEIGHT + agentPurple.getVelocity().y);
-		} else {
-			startY = endY = (int) (agentPurple.getPosition().y + agentPurple.getVelocity().y);
-		}
-		startX = (int) (agentPurple.getPosition().x);
-		endX = (int) (agentPurple.getPosition().x + AgentPurple.COLLISION_WIDTH);
-		getTiles(startX, startY, endX, endY, tiles);
-		
-		agentPurpleRect.y += agentPurple.getVelocity().y;
-		
-		for(Rectangle tile : tiles) {
-			if(agentPurpleRect.overlaps(tile)) {
-				if(agentPurple.getVelocity().y > 0) 
-					agentPurple.getPosition().y = tile.y - AgentPurple.COLLISION_HEIGHT;
-				else {
-					agentPurple.getPosition().y = tile.y + tile.height;
-					agentPurple.setGrounded(true);
-				}
-				agentPurple.getVelocity().y = 0;
-				break;
+		Rectangle yTile = yCollides(agentPurple, getyTiles(agentPurple));
+		if(yTile != null) {
+			if(agentPurple.getVelocity().y > 0)
+				agentPurple.getPosition().y = yTile.y - AgentPurple.COLLISION_HEIGHT;
+			else {
+				agentPurple.getPosition().y = yTile.y + yTile.height;
+				agentPurple.setGrounded(true);
 			}
+			agentPurple.getVelocity().y = 0;
 		}
 		
 		// unscale velocity
@@ -224,7 +186,64 @@ public class ParkourMaster extends Game {
 		
 		agentPurple.getVelocity().x *= AgentPurple.DAMPING;
 	}
-	// TODO: Simplify collision detection and reuse for enemies.
+	
+	Array<Rectangle> getxTiles(Entity entity) {
+		int startX, startY, endX, endY;
+		
+		if(entity.getVelocity().x > 0) {
+			startX = endX = (int) (entity.getPosition().x + Entity.COLLISION_WIDTH + entity.getVelocity().x);
+		} else {
+			startX = endX = (int) (entity.getPosition().x + entity.getVelocity().x);
+		}
+		startY = (int) (entity.getPosition().y);
+		endY = (int) (entity.getPosition().y + Entity.COLLISION_HEIGHT);
+
+		getTiles(startX, startY, endX, endY, tiles);
+		return tiles;
+	}
+	
+	// Returns true if collides in the x direction
+	Rectangle xCollides(Entity entity, Array<Rectangle> tiles) {
+		Rectangle entityRect = rectanglePool.obtain();
+		entityRect.set(entity.getPosition().x, entity.getPosition().y, Entity.COLLISION_WIDTH, Entity.COLLISION_HEIGHT);
+		entityRect.x += entity.getVelocity().x;
+		for(Rectangle tile : tiles) {
+			if(entityRect.overlaps(tile)) {
+				rectanglePool.free(entityRect);
+				return tile;
+			}
+		}
+		rectanglePool.free(entityRect);
+		return null;
+	}
+	
+	Array<Rectangle> getyTiles(Entity entity) {
+		int startX, startY, endX, endY;
+		
+		if(entity.getVelocity().y > 0) {
+			startY = endY = (int) (entity.getPosition().y + Entity.COLLISION_HEIGHT + entity.getVelocity().y);
+		} else {
+			startY = endY = (int) (entity.getPosition().y + entity.getVelocity().y);
+		}
+		startX = (int) (entity.getPosition().x);
+		endX = (int) (entity.getPosition().x + Entity.COLLISION_WIDTH);
+		getTiles(startX, startY, endX, endY, tiles);
+		return tiles;
+	}
+	
+	Rectangle yCollides(Entity entity, Array<Rectangle> tiles) {
+		Rectangle entityRect = rectanglePool.obtain();
+		entityRect.set(entity.getPosition().x, entity.getPosition().y, Entity.COLLISION_WIDTH, Entity.COLLISION_HEIGHT);
+		entityRect.y += entity.getVelocity().y;
+		for(Rectangle tile : tiles) {
+			if(entityRect.overlaps(tile)) {
+				rectanglePool.free(entityRect);
+				return tile;
+			}
+		}
+		rectanglePool.free(entityRect);
+		return null;
+	}
 	
 	private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles) {
 		// Gets all tiles of layer "foreground" where all the collision boxes are supposed to be.
