@@ -1,6 +1,6 @@
 package io.github.kevinmeh;
 
-public class Slime extends Entity {
+public class Slime extends Enemy {
     
     static {
         COLLISION_WIDTH = 20 / (ParkourMaster.TILE_SIZE * 2);
