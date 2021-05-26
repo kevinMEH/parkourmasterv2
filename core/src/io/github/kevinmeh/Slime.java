@@ -17,5 +17,9 @@ public class Slime extends Entity {
     }
     
     enum State { IDLE, WALK, JUMP, DEAD}
+
+    private State state = State.IDLE;
+    public State getState() { return state; }
+    public void setState(State state) { this.state = state; }
     
 }

@@ -34,18 +34,12 @@ public class Entity {
     private Direction direction = Direction.RIGHT;
     public Direction getDirection() { return direction; }
     public void setDirection(Direction direction) { this.direction = direction; }
-    
-    enum State { IDLE, WALK, JUMP, DEAD }
-
-    private State state = State.IDLE;
-    public State getState() { return state; }
-    public void setState(State state) { this.state = state; }
-
-    private float stateTime = 0;
-    public float getStateTime() { return stateTime; }
-    public void setStateTime(float stateTime) { this.stateTime = stateTime; }
 
     private boolean grounded = false;
     public boolean isGrounded() { return grounded; }
     public void setGrounded(boolean grounded) { this.grounded = grounded; }
+    
+    private float stateTime = 0;
+    public float getStateTime() { return stateTime; }
+    public void setStateTime(float stateTime) { this.stateTime = stateTime; }
 }

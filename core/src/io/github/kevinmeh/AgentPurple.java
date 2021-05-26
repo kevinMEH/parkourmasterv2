@@ -17,5 +17,10 @@ public class AgentPurple extends Entity {
     }
     
     enum State { IDLE, WALK, JUMP, DEAD, IDLE_SHOOT, WALK_SHOOT, JUMP_SHOOT }
+
+    private State state = State.IDLE;
+    public State getState() { return state; }
+    public void setState(State state) { this.state = state; }
+
     
 }
