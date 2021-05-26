@@ -127,7 +127,7 @@
   </object>
   <object id="13" name="slime1" x="4" y="156">
    <properties>
-    <property name="movementType" value="jumping"/>
+    <property name="movementType" value="free"/>
     <property name="x" type="int" value="4"/>
     <property name="y" type="int" value="156"/>
    </properties>
