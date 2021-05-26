@@ -11,25 +11,11 @@ public class AgentPurple extends Entity {
         
         WIDTH_DIFF = (DRAW_WIDTH - COLLISION_WIDTH) / 2;
         HEIGHT_DIFF = 0f;
-        
+
+        JUMP_VELOCITY = 27f;
         MAX_VELOCITY = 12f;
     }
-
-    final static float JUMP_VELOCITY = 27f;
-    final static float DAMPING = 0.77f; // Dampening velocity
-
-    enum State { IDLE, WALK, JUMP, DEAD }
-
-    private State state = State.IDLE;
-    public State getState() { return state; }
-    public void setState(State state) { this.state = state; }
-
-    private float stateTime = 0;
-    public float getStateTime() { return stateTime; }
-    public void setStateTime(float stateTime) { this.stateTime = stateTime; }
-
-    private boolean grounded = false;
-    public boolean isGrounded() { return grounded; }
-    public void setGrounded(boolean grounded) { this.grounded = grounded; }
+    
+    enum State { IDLE, WALK, JUMP, DEAD, IDLE_SHOOT, WALK_SHOOT, JUMP_SHOOT }
     
 }
