@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
@@ -26,6 +28,8 @@ public class ParkourMaster extends Game {
 
 	// DECLARE VARIABLES HERE
 	private TiledMap map;
+	// INFO: tiled map dimensions start from top left.
+	private MapObjects objects;
 	private OrthogonalTiledMapRenderer renderer;
 	private OrthographicCamera camera;
 	private float mapHeight;
@@ -60,6 +64,8 @@ public class ParkourMaster extends Game {
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / TILE_SIZE);
 		mapWidth = map.getProperties().get("width", Integer.class);
 		mapHeight = map.getProperties().get("height", Integer.class);
+		MapLayer objectLayer = map.getLayers().get("entities");
+		objects = objectLayer.getObjects();
 
 		loadAgentPurple();
 		
@@ -80,7 +86,7 @@ public class ParkourMaster extends Game {
 		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
 
 		agentPurple = new AgentPurple();
-		agentPurple.setPosition(new Vector2(7, 11));
+		agentPurple.setPosition(new Vector2((Integer) objects.get("spawn").getProperties().get("x") / TILE_SIZE, mapHeight - (Integer) objects.get("spawn").getProperties().get("y") / TILE_SIZE));
 	}
 
 	@Override
@@ -186,11 +192,11 @@ public class ParkourMaster extends Game {
 		// Collision detection and response
 		
 		// Checks the direction agent is moving and find collision boxes and compare it with agent's bounding box.
-		Rectangle xTile = xCollides(agentPurple, getxTiles(agentPurple));
+		Rectangle xTile = xCollides(agentPurple, getXTiles(agentPurple));
 		if(xTile != null) agentPurple.getVelocity().x = 0;
 		
 		// Up down collision checking
-		Rectangle yTile = yCollides(agentPurple, getyTiles(agentPurple));
+		Rectangle yTile = yCollides(agentPurple, getYTiles(agentPurple));
 		if(yTile != null) {
 			if(agentPurple.getVelocity().y > 0)
 				agentPurple.getPosition().y = yTile.y - AgentPurple.COLLISION_HEIGHT;
@@ -208,7 +214,7 @@ public class ParkourMaster extends Game {
 		agentPurple.getVelocity().x *= AgentPurple.DAMPING;
 	}
 	
-	Array<Rectangle> getxTiles(Entity entity) {
+	Array<Rectangle> getXTiles(Entity entity) {
 		int startX, startY, endX, endY;
 		
 		if(entity.getVelocity().x > 0) {
@@ -238,7 +244,7 @@ public class ParkourMaster extends Game {
 		return null;
 	}
 	
-	Array<Rectangle> getyTiles(Entity entity) {
+	Array<Rectangle> getYTiles(Entity entity) {
 		int startX, startY, endX, endY;
 		
 		if(entity.getVelocity().y > 0) {
