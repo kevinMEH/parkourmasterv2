@@ -4,9 +4,9 @@ public class AgentPurple extends Entity {
     
     static {
         COLLISION_WIDTH = 6.5f / (ParkourMaster.TILE_SIZE * 2);
-        COLLISION_HEIGHT = 20 / (ParkourMaster.TILE_SIZE * 2);
+        COLLISION_HEIGHT = 21 / (ParkourMaster.TILE_SIZE * 2);
         
-        DRAW_WIDTH = 15 / (ParkourMaster.TILE_SIZE * 2);
+        DRAW_WIDTH = 25 / (ParkourMaster.TILE_SIZE * 2);
         DRAW_HEIGHT = 22 / (ParkourMaster.TILE_SIZE * 2);
         
         WIDTH_DIFF = (DRAW_WIDTH - COLLISION_WIDTH) / 2;

@@ -33,6 +33,7 @@ public class ParkourMaster extends Game {
 	
 	private Animation<TextureRegion> agentPurpleIdle;
 	private Animation<TextureRegion> agentPurpleWalk;
+	private Animation<TextureRegion> agentPurpleShoot;
 	// TODO: Add jumping animation
 	
 	private AgentPurple agentPurple;
@@ -71,9 +72,10 @@ public class ParkourMaster extends Game {
 	
 	void loadAgentPurple() {
 		Texture texture = new Texture("sprites/agentPurple.png");
-		TextureRegion[] textureRegion = TextureRegion.split(texture, 15, 22)[0];
+		TextureRegion[] textureRegion = TextureRegion.split(texture, 25, 22)[0];
 		agentPurpleIdle = new Animation<>(0.5f, textureRegion[0], textureRegion[1]);
 		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
+		agentPurpleShoot = new Animation<>(0.15f, textureRegion[6], textureRegion[7], textureRegion[8]);
 		agentPurpleIdle.setPlayMode(Animation.PlayMode.LOOP);
 		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
 
