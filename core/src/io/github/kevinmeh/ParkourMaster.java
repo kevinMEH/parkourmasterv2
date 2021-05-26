@@ -91,16 +91,13 @@ public class ParkourMaster extends Game {
 
 	@Override
 	public void render() {
-		// Clears the screen
 		ScreenUtils.clear(1.0f, 1.0f, 1.0f, 1);
 		
-		// Delta time = time between current frame and last frame in seconds.
 		float deltaTime = Gdx.graphics.getDeltaTime();
 		
-		// Update agent purple. Process input, detect collision, update position.
+		// Input, collision, position
 		updateAgent(deltaTime);
 		
-		// Camera follows agent purple
 		camera.position.x = agentPurple.getPosition().x;
 		camera.position.y = agentPurple.getPosition().y + 2;
 		
@@ -130,7 +127,6 @@ public class ParkourMaster extends Game {
 		// Render agent purple
 		render(deltaTime);
 		
-		// If debug mode render rectangles.
 		if(debug) renderDebug();
 	}
 

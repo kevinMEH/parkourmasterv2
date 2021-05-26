@@ -4,9 +4,7 @@ TODO:
     Add enemy damage
     Add tutorial
     Add multiple levels
-    Add grass and trees and sun
     Add parallax
     
 FIXME:
-    Fix acceleration
     Stop agent from falling off map
