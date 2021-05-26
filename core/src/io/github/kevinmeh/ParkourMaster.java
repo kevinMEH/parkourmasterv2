@@ -47,7 +47,8 @@ public class ParkourMaster extends Game {
 	private static boolean debug = false;
 	private ShapeRenderer debugRenderer;
 	
-	static final float GRAVITY = -1.5f;
+	static float GRAVITY = -1.3f;
+	static float BACKUP_GRAVITY = -1.3f;
 	
 	static final float TILE_SIZE = 4f;
 	
@@ -125,6 +126,10 @@ public class ParkourMaster extends Game {
 		if(debug) renderDebug();
 	}
 
+	// Prevents certain commands from executing multiple times with one keystroke
+	float lastExecute = 0f;
+	float executeThreshold = 0.25f;
+
 	public void updateAgent(float deltaTime) {
 		if(deltaTime == 0) return;
 
@@ -132,6 +137,8 @@ public class ParkourMaster extends Game {
 			deltaTime = 0.1f;
 
 		agentPurple.setStateTime(deltaTime + agentPurple.getStateTime());
+		
+		lastExecute = lastExecute + deltaTime;
 
 		// Checking input
 		if(agentPurple.isGrounded() && (Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isKeyPressed(Input.Keys.W))) {
@@ -150,7 +157,17 @@ public class ParkourMaster extends Game {
 			agentPurple.setDirection(AgentPurple.Direction.RIGHT);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.B)) {
-			debug = !debug;
+			if(lastExecute > executeThreshold) {
+				debug = !debug;
+				lastExecute = 0f;
+			}
+		}
+		if(Gdx.input.isKeyPressed(Input.Keys.G)) {
+			if(lastExecute > executeThreshold) {
+				if (GRAVITY > -0.5f) GRAVITY = BACKUP_GRAVITY;
+				else GRAVITY = 0f;
+				lastExecute = 0f;
+			}
 		}
 		
 		agentPurple.getVelocity().add(0, ParkourMaster.GRAVITY);
