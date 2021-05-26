@@ -3,19 +3,19 @@ package io.github.kevinmeh;
 public class AgentPurple extends Entity {
     
     static {
-        COLLISION_WIDTH = 8 / (ParkourMaster.TILE_SIZE * 2);
-        COLLISION_HEIGHT = 22 / (ParkourMaster.TILE_SIZE * 2);
+        COLLISION_WIDTH = 6.5f / (ParkourMaster.TILE_SIZE * 2);
+        COLLISION_HEIGHT = 20 / (ParkourMaster.TILE_SIZE * 2);
         
         DRAW_WIDTH = 15 / (ParkourMaster.TILE_SIZE * 2);
         DRAW_HEIGHT = 22 / (ParkourMaster.TILE_SIZE * 2);
         
         WIDTH_DIFF = (DRAW_WIDTH - COLLISION_WIDTH) / 2;
-        HEIGHT_DIFF = (DRAW_HEIGHT - COLLISION_HEIGHT) / 2;
+        HEIGHT_DIFF = 0f;
         
-        MAX_VELOCITY = 8f;
+        MAX_VELOCITY = 12f;
     }
 
-    final static float JUMP_VELOCITY = 35f;
+    final static float JUMP_VELOCITY = 27f;
     final static float DAMPING = 0.77f; // Dampening velocity
 
     enum State { IDLE, WALK, JUMP, DEAD }
