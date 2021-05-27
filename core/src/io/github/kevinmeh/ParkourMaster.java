@@ -201,7 +201,10 @@ public class ParkourMaster extends Game {
 			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
 			agentPurple.setDirection(AgentPurple.Direction.RIGHT);
 		}
-		// TODO: Bind shoot to F
+		if(Gdx.input.isKeyPressed(Input.Keys.F)) {
+			if(agentPurple.getTimeSinceLastShot() > agentPurple.getFireRate())
+				fire();
+		}
 		if(Gdx.input.isKeyPressed(Input.Keys.B)) {
 			if(lastExecute > executeThreshold) {
 				debug = !debug;
