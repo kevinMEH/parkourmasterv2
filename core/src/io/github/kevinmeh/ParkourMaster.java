@@ -48,7 +48,7 @@ public class ParkourMaster extends Game {
 	
 	private Animation<TextureRegion> slimeWalk;
 	
-	private Animation<TextureRegion> bulletFrame;
+	private TextureRegion bulletFrame;
 	
 	private Pool<Rectangle> rectanglePool = new Pool<Rectangle>() {
 		@Override
@@ -100,8 +100,7 @@ public class ParkourMaster extends Game {
 		slimeWalk.setPlayMode(Animation.PlayMode.LOOP);
 		
 		Texture bulletTexture = new Texture("sprites/bullet.png");
-		TextureRegion bulletTextureRegion = TextureRegion.split(bulletTexture, 4, 3)[0][0];
-		bulletFrame = new Animation<>(0f, bulletTextureRegion);
+		bulletFrame = TextureRegion.split(bulletTexture, 4, 3)[0][0];
 
 		agentPurple = new AgentPurple();
 		agentPurple.setPosition(
