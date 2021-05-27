@@ -128,6 +128,16 @@ public class ParkourMaster extends Game {
 		
 		// Input, collision, position
 		updateAgent(deltaTime);
+		updateSlime(deltaTime);
+		
+		updateCameraPosition();
+		
+		// TiledMapRenderer based on what camera sees. Render map.
+		renderer.setView(camera);
+		renderer.render();
+		
+		renderAgent(deltaTime);
+		renderSlime(deltaTime);
 		
 		if(debug) renderDebug();
 	}
@@ -237,6 +247,111 @@ public class ParkourMaster extends Game {
 		agentPurple.getVelocity().x *= agentPurple.getDamping();
 	}
 	
+	void updateSlime(float deltaTime) {
+		if(deltaTime == 0) return;
+
+		if(deltaTime > 0.1f)
+			deltaTime = 0.1f;
+		
+		for(Slime slime : slimes) {
+			switch(slime.getMovementType()) {
+				case STATIC:
+					break;
+				case PATROL:
+				case FREE:
+					// Adds / subtracts velocity based on which direction slime is going
+					if(slime.getDirection() == Entity.Direction.RIGHT)
+						slime.getVelocity().x += slime.getMaxVelocity();
+					else
+						slime.getVelocity().x -= slime.getMaxVelocity();
+					if(slime.isGrounded()) slime.setState(Slime.State.WALK);
+					break;
+				case JUMPING:
+					// Randomly jump
+					if(Math.random() > 0.7 && slime.isGrounded()) {
+						slime.getVelocity().y += slime.getJumpVelocity();
+						slime.setState(Slime.State.JUMP);
+						slime.setGrounded(false);
+					}
+					break;
+
+			}
+			
+			slime.setStateTime(deltaTime + slime.getStateTime());
+			
+			slime.getVelocity().add(0, GRAVITY);
+			
+			slime.getVelocity().x = MathUtils.clamp(slime.getVelocity().x, -slime.getMaxVelocity(), slime.getMaxVelocity());
+			
+			slime.getVelocity().scl(deltaTime);
+			
+			// Collision checking
+			
+			// X collision checking if PATROL or FREE
+			if(slime.getMovementType() == Enemy.MovementType.PATROL || slime.getMovementType() == Enemy.MovementType.FREE) {
+				Rectangle xTile = xCollides(slime, getXTiles(slime));
+				if (xTile != null) {
+					slime.getVelocity().x = 0;
+					switch (slime.getMovementType()) {
+						// If bumps into wall switch direction
+						case PATROL:
+							slime.switchDirection();
+							break;
+						case FREE:
+							// If slime's x position is the same as the one half a second before, then switch direction
+							if (slime.getTimer() > 0.5f && Math.abs(slime.getPosition().x - slime.getLastPosition()) < 0.001) {
+								slime.switchDirection();
+								slime.setTimer(0f);
+							} else if (slime.isGrounded()) { // Else if it is grounded, jump
+								slime.getVelocity().scl(1 / deltaTime);
+								slime.getVelocity().y += slime.getJumpVelocity();
+								slime.getVelocity().scl(deltaTime);
+								slime.setGrounded(false);
+							}
+							if(slime.getTimer() < 0.01f) {
+								slime.setLastPosition(slime.getPosition().x);
+								slime.setTimer(slime.getTimer() + deltaTime);
+							} else if(slime.getTimer() > 0.01f) {
+								slime.setTimer(slime.getTimer() + deltaTime);
+							}
+					}
+				}
+				
+				if(slime.getMovementType() == Enemy.MovementType.PATROL) {
+					TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("foreground");
+					Cell edgeTile;
+					// Get the tile below and to the RIGHT / LEFT of slime and see if it is there
+					if(slime.getDirection() == Entity.Direction.RIGHT) {
+						edgeTile = layer.getCell((int) (slime.getPosition().x + slime.getCollisionWidth() + TILE_SIZE), (int) slime.getPosition().y - 2);
+					} else {
+						edgeTile = layer.getCell((int) (slime.getPosition().x - TILE_SIZE), (int) slime.getPosition().y - 2);
+					}
+					// If there is no tile, switch direction
+					if(edgeTile == null) {
+						slime.switchDirection();
+					}
+				}
+			}
+			
+			// Y collision checking
+			Rectangle yTile = yCollides(slime, getYTiles(slime));
+			if(yTile != null) {
+				if(slime.getVelocity().y > 0)
+					slime.getPosition().y = yTile.y - slime.getCollisionHeight();
+				else {
+					slime.getPosition().y = yTile.y + yTile.height;
+					slime.setGrounded(true);
+				}
+				slime.getVelocity().y = 0;
+			}
+			
+			slime.getPosition().add(slime.getVelocity());
+			slime.getVelocity().scl(1 / deltaTime);
+			
+			slime.getVelocity().x *= slime.getDamping();
+		}
+	}
+	
 	Array<Rectangle> getXTiles(Entity entity) {
 		int startX, startY, endX, endY;
 		
@@ -338,6 +453,27 @@ public class ParkourMaster extends Game {
 			batch.draw(animation, agentPurple.getDrawPosition().x + agentPurple.getDrawWidth(), agentPurple.getDrawPosition().y, -agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
 		}
 		batch.end();
+	}
+
+	void renderSlime(float deltaTime) {
+		for(Slime slime : slimes) {
+			TextureRegion animation = null;
+
+			switch(slime.getState()) {
+				// TODO: Add separate animations for slime states
+				default:
+					animation = slimeWalk.getKeyFrame(slime.getStateTime());
+			}
+			
+			Batch batch = renderer.getBatch();
+			batch.begin();
+			if(slime.getDirection() == Entity.Direction.RIGHT) {
+				batch.draw(animation, slime.getDrawPosition().x, slime.getDrawPosition().y, slime.getDrawWidth(), slime.getDrawHeight());
+			} else {
+				batch.draw(animation, slime.getDrawPosition().x + slime.getDrawWidth(), slime.getDrawPosition().y, -slime.getDrawWidth(), slime.getDrawHeight());
+			}
+			batch.end();
+		}
 	}
 	
 	private void renderDebug() {
