@@ -24,6 +24,8 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.ArrayList;
+
 public class ParkourMaster extends Game {
 
 	// DECLARE VARIABLES HERE
@@ -35,12 +37,16 @@ public class ParkourMaster extends Game {
 	private float mapHeight;
 	private float mapWidth;
 	
+	private AgentPurple agentPurple;
+	private ArrayList<Slime> slimes = new ArrayList<>();
+	
 	private Animation<TextureRegion> agentPurpleIdle;
 	private Animation<TextureRegion> agentPurpleWalk;
 	private Animation<TextureRegion> agentPurpleShoot;
 	// TODO: Add jumping animation
 	
-	private AgentPurple agentPurple;
+	private Animation<TextureRegion> slimeWalk;
+	
 	private Pool<Rectangle> rectanglePool = new Pool<Rectangle>() {
 		@Override
 		protected Rectangle newObject() {
@@ -79,14 +85,39 @@ public class ParkourMaster extends Game {
 	void loadAgentPurple() {
 		Texture texture = new Texture("sprites/agentPurple.png");
 		TextureRegion[] textureRegion = TextureRegion.split(texture, 25, 22)[0];
+		
+		Texture slimeTexture = new Texture("sprites/slime.png");
+		TextureRegion[] slimeTextureRegion = TextureRegion.split(slimeTexture, 22, 13)[0];
+		
 		agentPurpleIdle = new Animation<>(0.5f, textureRegion[0], textureRegion[1]);
 		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
 		agentPurpleShoot = new Animation<>(0.15f, textureRegion[6], textureRegion[7], textureRegion[8]);
 		agentPurpleIdle.setPlayMode(Animation.PlayMode.LOOP);
 		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
+		
+		slimeWalk = new Animation<>(0.4f, slimeTextureRegion[0], slimeTextureRegion[1]);
+		slimeWalk.setPlayMode(Animation.PlayMode.LOOP);
 
 		agentPurple = new AgentPurple();
-		agentPurple.setPosition(new Vector2((Integer) objects.get("spawn").getProperties().get("x") / TILE_SIZE, mapHeight - (Integer) objects.get("spawn").getProperties().get("y") / TILE_SIZE));
+		agentPurple.setPosition(
+				new Vector2(
+						(Integer) objects.get("spawn").getProperties().get("x") / TILE_SIZE, 
+						mapHeight - (Integer) objects.get("spawn").getProperties().get("y") / TILE_SIZE
+				)
+		);
+		
+		// Initializes slime1 through slime4 and adds to slimes
+		for(int i = 1; i < 4; i++) {
+			Slime slime = new Slime();
+			slime.setPosition(
+					new Vector2(
+							(Integer) objects.get("slime" + i).getProperties().get("x") / TILE_SIZE,
+							mapHeight - (Integer) objects.get("slime" + i).getProperties().get("y") / TILE_SIZE
+					)
+			);
+			slime.setMovementType((String) objects.get("slime" + i).getProperties().get("movementType"));
+			slimes.add(slime);
+		}
 	}
 
 	@Override
