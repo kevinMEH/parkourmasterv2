@@ -39,6 +39,7 @@ public class ParkourMaster extends Game {
 	
 	private AgentPurple agentPurple;
 	private ArrayList<Slime> slimes = new ArrayList<>();
+	private ArrayList<Bullet> bullets = new ArrayList<>();
 	
 	private Animation<TextureRegion> agentPurpleIdle;
 	private Animation<TextureRegion> agentPurpleWalk;
@@ -46,6 +47,8 @@ public class ParkourMaster extends Game {
 	// TODO: Add jumping animation
 	
 	private Animation<TextureRegion> slimeWalk;
+	
+	private Animation<TextureRegion> bulletFrame;
 	
 	private Pool<Rectangle> rectanglePool = new Pool<Rectangle>() {
 		@Override
@@ -73,7 +76,7 @@ public class ParkourMaster extends Game {
 		MapLayer objectLayer = map.getLayers().get("entities");
 		objects = objectLayer.getObjects();
 
-		loadAgentPurple();
+		initialize();
 		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 32, 18);
@@ -82,21 +85,23 @@ public class ParkourMaster extends Game {
 		debugRenderer = new ShapeRenderer();
 	}
 	
-	void loadAgentPurple() {
+	void initialize() {
 		Texture texture = new Texture("sprites/agentPurple.png");
 		TextureRegion[] textureRegion = TextureRegion.split(texture, 25, 22)[0];
-		
-		Texture slimeTexture = new Texture("sprites/slime.png");
-		TextureRegion[] slimeTextureRegion = TextureRegion.split(slimeTexture, 22, 13)[0];
-		
 		agentPurpleIdle = new Animation<>(0.5f, textureRegion[0], textureRegion[1]);
 		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
 		agentPurpleShoot = new Animation<>(0.15f, textureRegion[6], textureRegion[7], textureRegion[8]);
 		agentPurpleIdle.setPlayMode(Animation.PlayMode.LOOP);
 		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
 		
+		Texture slimeTexture = new Texture("sprites/slime.png");
+		TextureRegion[] slimeTextureRegion = TextureRegion.split(slimeTexture, 22, 13)[0];
 		slimeWalk = new Animation<>(0.4f, slimeTextureRegion[0], slimeTextureRegion[1]);
 		slimeWalk.setPlayMode(Animation.PlayMode.LOOP);
+		
+		Texture bulletTexture = new Texture("sprites/bullet.png");
+		TextureRegion bulletTextureRegion = TextureRegion.split(bulletTexture, 4, 3)[0][0];
+		bulletFrame = new Animation<>(0f, bulletTextureRegion);
 
 		agentPurple = new AgentPurple();
 		agentPurple.setPosition(
