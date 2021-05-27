@@ -98,9 +98,13 @@ public class ParkourMaster extends Game {
 		// Input, collision, position
 		updateAgent(deltaTime);
 		
+		if(debug) renderDebug();
+	}
+	
+	void updateCameraPosition() {
 		camera.position.x = agentPurple.getPosition().x;
 		camera.position.y = agentPurple.getPosition().y + 2;
-		
+
 		// Clamping camera to map:
 		// There are 2 rectangles: The map and the camera. 
 		// If the camera goes outside the map, set camera to be on the edge of map.
@@ -108,7 +112,7 @@ public class ParkourMaster extends Game {
 		float cameraRight = camera.position.x + camera.viewportWidth / 2;
 		float cameraBottom = camera.position.y - camera.viewportHeight / 2;
 		float cameraTop = camera.position.y + camera.viewportHeight / 2;
-		
+
 		if(cameraLeft <= 0)
 			camera.position.x = camera.viewportWidth / 2;
 		if(cameraRight >= mapWidth)
@@ -117,17 +121,8 @@ public class ParkourMaster extends Game {
 			camera.position.y = camera.viewportHeight / 2;
 		if(cameraTop >= mapHeight)
 			camera.position.y = mapHeight - camera.viewportHeight / 2;
-		
+
 		camera.update();
-		
-		// TiledMapRenderer based on what camera sees. Render map.
-		renderer.setView(camera);
-		renderer.render();
-		
-		// Render agent purple
-		render(deltaTime);
-		
-		if(debug) renderDebug();
 	}
 
 	// Prevents certain commands from executing multiple times with one keystroke
@@ -146,17 +141,17 @@ public class ParkourMaster extends Game {
 
 		// Checking input
 		if(agentPurple.isGrounded() && (Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isKeyPressed(Input.Keys.W))) {
-			agentPurple.getVelocity().y = agentPurple.getVelocity().y + AgentPurple.JUMP_VELOCITY;
+			agentPurple.getVelocity().y += agentPurple.getJumpVelocity();
 			agentPurple.setState(AgentPurple.State.JUMP);
 			agentPurple.setGrounded(false);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-			agentPurple.getVelocity().x = agentPurple.getVelocity().x - AgentPurple.MAX_VELOCITY;
+			agentPurple.getVelocity().x = agentPurple.getVelocity().x - agentPurple.getMaxVelocity();
 			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
 			agentPurple.setDirection(AgentPurple.Direction.LEFT);
 		}
 		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			agentPurple.getVelocity().x = agentPurple.getVelocity().x + AgentPurple.MAX_VELOCITY;
+			agentPurple.getVelocity().x = agentPurple.getVelocity().x + agentPurple.getMaxVelocity();
 			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
 			agentPurple.setDirection(AgentPurple.Direction.RIGHT);
 		}
@@ -175,9 +170,9 @@ public class ParkourMaster extends Game {
 			}
 		}
 		
-		agentPurple.getVelocity().add(0, ParkourMaster.GRAVITY);
+		agentPurple.getVelocity().add(0, GRAVITY);
 		
-		agentPurple.getVelocity().x = MathUtils.clamp(agentPurple.getVelocity().x, -AgentPurple.MAX_VELOCITY, AgentPurple.MAX_VELOCITY);
+		agentPurple.getVelocity().x = MathUtils.clamp(agentPurple.getVelocity().x, -agentPurple.getMaxVelocity(), agentPurple.getMaxVelocity());
 		
 		if(Math.abs(agentPurple.getVelocity().x) < 0.25f) {
 			agentPurple.getVelocity().x = 0;
