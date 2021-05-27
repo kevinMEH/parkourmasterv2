@@ -46,4 +46,11 @@ public class AgentPurple extends Entity {
     public State getState() { return state; }
     public void setState(State state) { this.state = state; }
     
+    private float timeSinceLastShot = 0f;
+    float getTimeSinceLastShot() { return timeSinceLastShot; }
+    void setTimeSinceLastShot(float time) { this.timeSinceLastShot = time; }
+    
+    private float fireRate = 0.7f;
+    float getFireRate() { return fireRate; }
+    
 }
