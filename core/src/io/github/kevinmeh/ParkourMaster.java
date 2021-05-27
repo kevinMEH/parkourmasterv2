@@ -322,9 +322,9 @@ public class ParkourMaster extends Game {
 					Cell edgeTile;
 					// Get the tile below and to the RIGHT / LEFT of slime and see if it is there
 					if(slime.getDirection() == Entity.Direction.RIGHT) {
-						edgeTile = layer.getCell((int) (slime.getPosition().x + slime.getCollisionWidth() + TILE_SIZE), (int) slime.getPosition().y - 2);
+						edgeTile = layer.getCell((int) (slime.getPosition().x + slime.getCollisionWidth()), (int) slime.getPosition().y - 1);
 					} else {
-						edgeTile = layer.getCell((int) (slime.getPosition().x - TILE_SIZE), (int) slime.getPosition().y - 2);
+						edgeTile = layer.getCell((int) (slime.getPosition().x), (int) slime.getPosition().y - 1);
 					}
 					// If there is no tile, switch direction
 					if(edgeTile == null) {
