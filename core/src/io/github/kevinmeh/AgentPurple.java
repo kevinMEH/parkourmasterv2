@@ -45,6 +45,5 @@ public class AgentPurple extends Entity {
     private State state = State.IDLE;
     public State getState() { return state; }
     public void setState(State state) { this.state = state; }
-
     
 }
