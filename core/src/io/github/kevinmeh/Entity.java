@@ -1,32 +1,26 @@
 package io.github.kevinmeh;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Entity {
-    
-    enum Direction { RIGHT, LEFT }
+abstract class Entity {
 
-    // 1 UNIT = 8 PIXELS
-    // Collision box WIDTH and HEIGHT
-    static float COLLISION_WIDTH;
-    static float COLLISION_HEIGHT;
-    // Half of difference between actual dimensions and collision dimensions.
-    static float WIDTH_DIFF;
-    static float HEIGHT_DIFF;
-    // The height to draw at
-    static float DRAW_WIDTH;
-    static float DRAW_HEIGHT;
-    
-    static float JUMP_VELOCITY;
-    static float MAX_VELOCITY;
-    static float DAMPING = 0.77f;
+    abstract float getCollisionWidth();
+    abstract float getCollisionHeight();
+    abstract float getWidthDiff();
+    abstract float getHeightDiff();
+    abstract float getDrawWidth();
+    abstract float getDrawHeight();
+    abstract float getJumpVelocity();
+    abstract float getMaxVelocity();
+    abstract float getDamping();
+
+    enum Direction { RIGHT, LEFT }
 
     // Position describes the corner of the collision box.
     private Vector2 position = new Vector2();
     public void setPosition(Vector2 position) { this.position = position; }
     public Vector2 getPosition() { return position; }
-    public Vector2 getDrawPosition() { return new Vector2(position.x - WIDTH_DIFF, position.y - HEIGHT_DIFF); }
+    public Vector2 getDrawPosition() { return new Vector2(position.x - getWidthDiff(), position.y); }
 
     private Vector2 velocity = new Vector2();
     public Vector2 getVelocity() { return velocity; }
@@ -34,6 +28,10 @@ public class Entity {
     private Direction direction = Direction.RIGHT;
     public Direction getDirection() { return direction; }
     public void setDirection(Direction direction) { this.direction = direction; }
+    public void switchDirection() {
+        if(this.direction == Direction.RIGHT) this.direction = Direction.LEFT;
+        else this.direction = Direction.RIGHT;
+    }
 
     private boolean grounded = false;
     public boolean isGrounded() { return grounded; }
