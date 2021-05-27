@@ -118,10 +118,10 @@
    </properties>
    <point/>
   </object>
-  <object id="12" name="spawn" x="92" y="152">
+  <object id="12" name="spawn" x="96" y="156">
    <properties>
-    <property name="x" type="int" value="92"/>
-    <property name="y" type="int" value="152"/>
+    <property name="x" type="int" value="96"/>
+    <property name="y" type="int" value="156"/>
    </properties>
    <point/>
   </object>
@@ -135,7 +135,7 @@
   </object>
   <object id="16" name="slime2" x="296" y="80">
    <properties>
-    <property name="movementType" value="static"/>
+    <property name="movementType" value="patrol"/>
     <property name="x" type="int" value="296"/>
     <property name="y" type="int" value="80"/>
    </properties>
