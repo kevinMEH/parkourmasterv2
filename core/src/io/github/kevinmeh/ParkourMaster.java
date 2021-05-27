@@ -191,7 +191,7 @@ public class ParkourMaster extends Game {
 		Rectangle yTile = yCollides(agentPurple, getYTiles(agentPurple));
 		if(yTile != null) {
 			if(agentPurple.getVelocity().y > 0)
-				agentPurple.getPosition().y = yTile.y - AgentPurple.COLLISION_HEIGHT;
+				agentPurple.getPosition().y = yTile.y - agentPurple.getCollisionHeight();
 			else {
 				agentPurple.getPosition().y = yTile.y + yTile.height;
 				agentPurple.setGrounded(true);
@@ -203,19 +203,19 @@ public class ParkourMaster extends Game {
 		agentPurple.getPosition().add(agentPurple.getVelocity());
 		agentPurple.getVelocity().scl(1 / deltaTime);
 		
-		agentPurple.getVelocity().x *= AgentPurple.DAMPING;
+		agentPurple.getVelocity().x *= agentPurple.getDamping();
 	}
 	
 	Array<Rectangle> getXTiles(Entity entity) {
 		int startX, startY, endX, endY;
 		
 		if(entity.getVelocity().x > 0) {
-			startX = endX = (int) (entity.getPosition().x + Entity.COLLISION_WIDTH + entity.getVelocity().x);
+			startX = endX = (int) (entity.getPosition().x + entity.getCollisionWidth() + entity.getVelocity().x);
 		} else {
 			startX = endX = (int) (entity.getPosition().x + entity.getVelocity().x);
 		}
 		startY = (int) (entity.getPosition().y);
-		endY = (int) (entity.getPosition().y + Entity.COLLISION_HEIGHT);
+		endY = (int) (entity.getPosition().y + entity.getCollisionHeight());
 
 		getTiles(startX, startY, endX, endY, tiles);
 		return tiles;
@@ -224,7 +224,7 @@ public class ParkourMaster extends Game {
 	// Returns true if collides in the x direction
 	Rectangle xCollides(Entity entity, Array<Rectangle> tiles) {
 		Rectangle entityRect = rectanglePool.obtain();
-		entityRect.set(entity.getPosition().x, entity.getPosition().y, Entity.COLLISION_WIDTH, Entity.COLLISION_HEIGHT);
+		entityRect.set(entity.getPosition().x, entity.getPosition().y, entity.getCollisionWidth(), entity.getCollisionHeight());
 		entityRect.x += entity.getVelocity().x;
 		for(Rectangle tile : tiles) {
 			if(entityRect.overlaps(tile)) {
@@ -240,19 +240,19 @@ public class ParkourMaster extends Game {
 		int startX, startY, endX, endY;
 		
 		if(entity.getVelocity().y > 0) {
-			startY = endY = (int) (entity.getPosition().y + Entity.COLLISION_HEIGHT + entity.getVelocity().y);
+			startY = endY = (int) (entity.getPosition().y + entity.getCollisionHeight() + entity.getVelocity().y);
 		} else {
 			startY = endY = (int) (entity.getPosition().y + entity.getVelocity().y);
 		}
 		startX = (int) (entity.getPosition().x);
-		endX = (int) (entity.getPosition().x + Entity.COLLISION_WIDTH);
+		endX = (int) (entity.getPosition().x + entity.getCollisionWidth());
 		getTiles(startX, startY, endX, endY, tiles);
 		return tiles;
 	}
 	
 	Rectangle yCollides(Entity entity, Array<Rectangle> tiles) {
 		Rectangle entityRect = rectanglePool.obtain();
-		entityRect.set(entity.getPosition().x, entity.getPosition().y, Entity.COLLISION_WIDTH, Entity.COLLISION_HEIGHT);
+		entityRect.set(entity.getPosition().x, entity.getPosition().y, entity.getCollisionWidth(), entity.getCollisionHeight());
 		entityRect.y += entity.getVelocity().y;
 		for(Rectangle tile : tiles) {
 			if(entityRect.overlaps(tile)) {
@@ -281,7 +281,7 @@ public class ParkourMaster extends Game {
 		}
 	}
 
-	public void render(float deltaTime) {
+	void renderAgent(float deltaTime) {
 		TextureRegion animation = null;
 		
 		switch(agentPurple.getState()) {
@@ -302,9 +302,9 @@ public class ParkourMaster extends Game {
 		Batch batch = renderer.getBatch();
 		batch.begin();
 		if(agentPurple.getDirection() == AgentPurple.Direction.RIGHT) {
-			batch.draw(animation, agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, AgentPurple.DRAW_WIDTH, AgentPurple.DRAW_HEIGHT);
+			batch.draw(animation, agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
 		} else {
-			batch.draw(animation, agentPurple.getDrawPosition().x + AgentPurple.DRAW_WIDTH, agentPurple.getDrawPosition().y, -AgentPurple.DRAW_WIDTH, AgentPurple.DRAW_HEIGHT);
+			batch.draw(animation, agentPurple.getDrawPosition().x + agentPurple.getDrawWidth(), agentPurple.getDrawPosition().y, -agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
 		}
 		batch.end();
 	}
@@ -315,11 +315,11 @@ public class ParkourMaster extends Game {
 		
 		// Draw box
 		debugRenderer.setColor(Color.RED);
-		debugRenderer.rect(agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, AgentPurple.DRAW_WIDTH, AgentPurple.DRAW_HEIGHT);
+		debugRenderer.rect(agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
 		
 		// Collision box
 		debugRenderer.setColor(Color.CORAL);
-		debugRenderer.rect(agentPurple.getPosition().x, agentPurple.getPosition().y, AgentPurple.COLLISION_WIDTH, AgentPurple.COLLISION_HEIGHT);
+		debugRenderer.rect(agentPurple.getPosition().x, agentPurple.getPosition().y, agentPurple.getCollisionWidth(), agentPurple.getCollisionHeight());
 		
 		debugRenderer.setColor(Color.BLUE);
 		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("foreground");
