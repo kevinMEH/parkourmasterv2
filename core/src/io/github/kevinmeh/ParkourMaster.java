@@ -47,6 +47,7 @@ public class ParkourMaster extends Game {
 	// TODO: Add jumping animation
 	
 	private Animation<TextureRegion> slimeWalk;
+	private TextureRegion slimeDead;
 	
 	private TextureRegion bulletFrame;
 	
@@ -89,15 +90,16 @@ public class ParkourMaster extends Game {
 		Texture texture = new Texture("sprites/agentPurple.png");
 		TextureRegion[] textureRegion = TextureRegion.split(texture, 25, 22)[0];
 		agentPurpleIdle = new Animation<>(0.5f, textureRegion[0], textureRegion[1]);
-		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
-		agentPurpleShoot = new Animation<>(0.15f, textureRegion[6], textureRegion[7], textureRegion[8]);
 		agentPurpleIdle.setPlayMode(Animation.PlayMode.LOOP);
+		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
 		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
+		agentPurpleShoot = new Animation<>(0.15f, textureRegion[6], textureRegion[7], textureRegion[8]);
 		
 		Texture slimeTexture = new Texture("sprites/slime.png");
 		TextureRegion[] slimeTextureRegion = TextureRegion.split(slimeTexture, 22, 13)[0];
 		slimeWalk = new Animation<>(0.4f, slimeTextureRegion[0], slimeTextureRegion[1]);
 		slimeWalk.setPlayMode(Animation.PlayMode.LOOP);
+		slimeDead = slimeTextureRegion[2];
 		
 		Texture bulletTexture = new Texture("sprites/bullet.png");
 		bulletFrame = TextureRegion.split(bulletTexture, 4, 3)[0][0];
