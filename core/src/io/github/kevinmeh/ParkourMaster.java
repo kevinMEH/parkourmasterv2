@@ -464,6 +464,8 @@ public class ParkourMaster extends Game {
 	}
 
 	void renderSlime(float deltaTime) {
+		Batch batch = renderer.getBatch();
+		batch.begin();
 		for(Slime slime : slimes) {
 			TextureRegion animation = null;
 
@@ -473,15 +475,13 @@ public class ParkourMaster extends Game {
 					animation = slimeWalk.getKeyFrame(slime.getStateTime());
 			}
 			
-			Batch batch = renderer.getBatch();
-			batch.begin();
 			if(slime.getDirection() == Entity.Direction.RIGHT) {
 				batch.draw(animation, slime.getDrawPosition().x, slime.getDrawPosition().y, slime.getDrawWidth(), slime.getDrawHeight());
 			} else {
 				batch.draw(animation, slime.getDrawPosition().x + slime.getDrawWidth(), slime.getDrawPosition().y, -slime.getDrawWidth(), slime.getDrawHeight());
 			}
-			batch.end();
 		}
+		batch.end();
 	}
 	
 	private void renderDebug() {
