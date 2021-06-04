@@ -3,6 +3,7 @@ package io.github.kevinmeh;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -50,6 +51,8 @@ public class ParkourMaster extends Game {
 	private TextureRegion slimeDead;
 	
 	private TextureRegion bulletFrame;
+	
+	private Sound fireSound;
 	
 	private Pool<Rectangle> rectanglePool = new Pool<Rectangle>() {
 		@Override
@@ -103,6 +106,8 @@ public class ParkourMaster extends Game {
 		
 		Texture bulletTexture = new Texture("sprites/bullet.png");
 		bulletFrame = TextureRegion.split(bulletTexture, 4, 3)[0][0];
+		
+		fireSound = Gdx.audio.newSound(Gdx.files.internal("sounds/pistol.mp3"));
 
 		agentPurple = new AgentPurple();
 		agentPurple.setPosition(
