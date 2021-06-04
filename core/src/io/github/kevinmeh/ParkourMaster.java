@@ -97,6 +97,7 @@ public class ParkourMaster extends Game {
 		agentPurpleWalk = new Animation<>(0.15f, textureRegion[2], textureRegion[3], textureRegion[4], textureRegion[5]);
 		agentPurpleWalk.setPlayMode(Animation.PlayMode.LOOP);
 		agentPurpleShoot = new Animation<>(0.15f, textureRegion[6], textureRegion[7], textureRegion[8]);
+		agentPurpleShoot.setPlayMode(Animation.PlayMode.NORMAL);
 		
 		Texture slimeTexture = new Texture("sprites/slime.png");
 		TextureRegion[] slimeTextureRegion = TextureRegion.split(slimeTexture, 22, 13)[0];
@@ -140,6 +141,7 @@ public class ParkourMaster extends Game {
 		// Input, collision, position
 		updateAgent(deltaTime);
 		updateSlime(deltaTime);
+		updateBullet(deltaTime);
 		
 		updateCameraPosition();
 		
@@ -149,6 +151,7 @@ public class ParkourMaster extends Game {
 		
 		renderAgent(deltaTime);
 		renderSlime(deltaTime);
+		renderBullet(deltaTime);
 		
 		if(debug) renderDebug();
 	}
@@ -188,6 +191,7 @@ public class ParkourMaster extends Game {
 			deltaTime = 0.1f;
 
 		agentPurple.setStateTime(deltaTime + agentPurple.getStateTime());
+		agentPurple.setTimeSinceLastShot(agentPurple.getTimeSinceLastShot() + deltaTime);
 		
 		lastExecute = lastExecute + deltaTime;
 
@@ -231,7 +235,7 @@ public class ParkourMaster extends Game {
 		
 		if(Math.abs(agentPurple.getVelocity().x) < 0.25f) {
 			agentPurple.getVelocity().x = 0;
-			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.IDLE);
+			if(agentPurple.isNotShooting() && agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.IDLE);
 		}
 		
 		agentPurple.getVelocity().scl(deltaTime);
@@ -259,6 +263,24 @@ public class ParkourMaster extends Game {
 		agentPurple.getVelocity().scl(1 / deltaTime);
 		
 		agentPurple.getVelocity().x *= agentPurple.getDamping();
+	}
+	
+	void fire() {
+		agentPurple.setTimeSinceLastShot(0f);
+		agentPurple.setState(AgentPurple.State.IDLE_SHOOT);
+		agentPurple.setStateTime(0);
+		Bullet bullet = new Bullet();
+		if(agentPurple.getDirection() == Entity.Direction.RIGHT) {
+			bullet.setDirection(Entity.Direction.RIGHT);
+			bullet.setPosition(new Vector2(agentPurple.getPosition().x + 1f + agentPurple.getCollisionWidth(), agentPurple.getPosition().y + 1.37f));
+			bullet.getVelocity().x = bullet.getMaxVelocity();
+		} else {
+			bullet.setDirection(Entity.Direction.LEFT);
+			bullet.setPosition(new Vector2(agentPurple.getPosition().x - 1.5f, agentPurple.getPosition().y + 1.37f));
+			bullet.getVelocity().x = -bullet.getMaxVelocity();
+		}
+		bullets.add(bullet);
+		fireSound.play(0.2f);
 	}
 	
 	void updateSlime(float deltaTime) {
@@ -368,6 +390,39 @@ public class ParkourMaster extends Game {
 		}
 	}
 	
+	void updateBullet(float deltaTime) {
+		if(deltaTime == 0) return;
+		
+		if(deltaTime > 0.1f)
+			deltaTime = 0.1f;
+		
+		for(int i = 0; i < bullets.size(); i++) {
+			Bullet bullet = bullets.get(i);
+			bullet.setStateTime(deltaTime + bullet.getStateTime());
+			
+			bullet.getVelocity().scl(deltaTime);
+			
+			// Kills slime if overlaps with slime collision box
+			for(Slime slime : slimes) {
+				if(slime.getCollisionBox().overlaps(bullet.getCollisionBox())) {
+					slime.setState(Enemy.State.DEAD);
+				}
+			}
+			
+			// Collision checking
+			
+			Rectangle xTile = xCollides(bullet, getXTiles(bullet));
+			if(xTile != null) {
+				bullet.getVelocity().x = 0;
+				bullets.remove(bullet);
+				i--;
+			}
+			
+			bullet.getPosition().add(bullet.getVelocity());
+			bullet.getVelocity().scl(1 / deltaTime);
+		}
+	}
+	
 	Array<Rectangle> getXTiles(Entity entity) {
 		int startX, startY, endX, endY;
 		
@@ -444,7 +499,23 @@ public class ParkourMaster extends Game {
 	}
 
 	void renderAgent(float deltaTime) {
+		Batch batch = renderer.getBatch();
 		TextureRegion animation = null;
+		batch.begin();
+
+		if(agentPurple.getState() == AgentPurple.State.IDLE_SHOOT) {
+			if(agentPurple.getDirection() == AgentPurple.Direction.RIGHT) {
+				batch.draw(agentPurpleShoot.getKeyFrame(agentPurple.getStateTime()), agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
+			} else {
+				batch.draw(agentPurpleShoot.getKeyFrame(agentPurple.getStateTime()), agentPurple.getDrawPosition().x + agentPurple.getDrawWidth(), agentPurple.getDrawPosition().y, -agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
+			}
+			batch.end();
+			if(agentPurpleShoot.isAnimationFinished(deltaTime)) {
+				System.out.println("Animation finished");
+				agentPurple.setState(AgentPurple.State.IDLE);
+			}
+			return;
+		}
 		
 		switch(agentPurple.getState()) {
 			case IDLE:
@@ -454,15 +525,13 @@ public class ParkourMaster extends Game {
 				animation = agentPurpleWalk.getKeyFrame(agentPurple.getStateTime());
 				break;
 			case JUMP:
-				animation = agentPurpleIdle.getKeyFrame(agentPurple.getStateTime());
+				animation = agentPurpleWalk.getKeyFrame(agentPurple.getStateTime());
 				break;
 			case DEAD:
 				animation = agentPurpleIdle.getKeyFrame(agentPurple.getStateTime());
 				break;
 		}
-
-		Batch batch = renderer.getBatch();
-		batch.begin();
+		
 		if(agentPurple.getDirection() == AgentPurple.Direction.RIGHT) {
 			batch.draw(animation, agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
 		} else {
@@ -489,6 +558,19 @@ public class ParkourMaster extends Game {
 				batch.draw(animation, slime.getDrawPosition().x, slime.getDrawPosition().y, slime.getDrawWidth(), slime.getDrawHeight());
 			} else {
 				batch.draw(animation, slime.getDrawPosition().x + slime.getDrawWidth(), slime.getDrawPosition().y, -slime.getDrawWidth(), slime.getDrawHeight());
+			}
+		}
+		batch.end();
+	}
+	
+	void renderBullet(float deltaTime) {
+		Batch batch = renderer.getBatch();
+		batch.begin();
+		for(Bullet bullet : bullets) {
+			if(bullet.getDirection() == Entity.Direction.RIGHT) {
+				batch.draw(bulletFrame, bullet.getDrawPosition().x, bullet.getDrawPosition().y, bullet.getDrawWidth(), bullet.getDrawHeight());
+			} else {
+				batch.draw(bulletFrame, bullet.getDrawPosition().x + bullet.getDrawWidth(), bullet.getDrawPosition().y, -bullet.getDrawWidth(), bullet.getDrawHeight());
 			}
 		}
 		batch.end();
