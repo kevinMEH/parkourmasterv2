@@ -43,8 +43,12 @@ public class AgentPurple extends Entity {
     enum State { IDLE, WALK, JUMP, DEAD, IDLE_SHOOT, WALK_SHOOT, JUMP_SHOOT }
 
     private State state = State.IDLE;
-    public State getState() { return state; }
-    public void setState(State state) { this.state = state; }
+    public State getState() {
+        return state; 
+    }
+    public void setState(State state) {
+        this.state = state;
+    }
     
     private float timeSinceLastShot = 10f;
     float getTimeSinceLastShot() { return timeSinceLastShot; }
@@ -52,5 +56,6 @@ public class AgentPurple extends Entity {
     
     private float fireRate = 0.7f;
     float getFireRate() { return fireRate; }
+    boolean isNotShooting() { return state != State.IDLE_SHOOT; }
     
 }
