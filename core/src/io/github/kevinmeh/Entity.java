@@ -1,5 +1,6 @@
 package io.github.kevinmeh;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 abstract class Entity {
@@ -15,6 +16,8 @@ abstract class Entity {
     abstract float getDamping();
 
     enum Direction { RIGHT, LEFT }
+    
+    public Rectangle getCollisionBox() { return new Rectangle(position.x, position.y, getCollisionWidth(), getCollisionHeight()); }
 
     // Position describes the corner of the collision box.
     private Vector2 position = new Vector2();
