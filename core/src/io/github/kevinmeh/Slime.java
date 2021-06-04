@@ -42,12 +42,6 @@ public class Slime extends Enemy {
         MAX_VELOCITY = 6f;
     }
     
-    enum State { IDLE, WALK, JUMP, DEAD}
-
-    private State state = State.IDLE;
-    public State getState() { return state; }
-    public void setState(State state) { this.state = state; }
-    
     @Override
     public void setPosition(Vector2 position) {
         lastPosition = position.x;
