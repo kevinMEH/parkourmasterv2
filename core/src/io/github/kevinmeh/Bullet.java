@@ -37,6 +37,6 @@ public class Bullet extends Entity {
         HEIGHT_DIFF = 0f;
 
         JUMP_VELOCITY = 0f;
-        MAX_VELOCITY = 36f;
+        MAX_VELOCITY = 72f;
     }
 }
