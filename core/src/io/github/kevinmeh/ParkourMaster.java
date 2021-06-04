@@ -268,27 +268,29 @@ public class ParkourMaster extends Game {
 			deltaTime = 0.1f;
 		
 		for(Slime slime : slimes) {
-			switch(slime.getMovementType()) {
-				case STATIC:
-					break;
-				case PATROL:
-				case FREE:
-					// Adds / subtracts velocity based on which direction slime is going
-					if(slime.getDirection() == Entity.Direction.RIGHT)
-						slime.getVelocity().x += slime.getMaxVelocity();
-					else
-						slime.getVelocity().x -= slime.getMaxVelocity();
-					if(slime.isGrounded()) slime.setState(Slime.State.WALK);
-					break;
-				case JUMPING:
-					// Randomly jump
-					if(Math.random() > 0.7 && slime.isGrounded()) {
-						slime.getVelocity().y += slime.getJumpVelocity();
-						slime.setState(Slime.State.JUMP);
-						slime.setGrounded(false);
-					}
-					break;
-
+			// Movement
+			if(slime.getState() != Enemy.State.DEAD) {
+				switch (slime.getMovementType()) {
+					case STATIC:
+						break;
+					case PATROL:
+					case FREE:
+						// Adds / subtracts velocity based on which direction slime is going
+						if (slime.getDirection() == Entity.Direction.RIGHT)
+							slime.getVelocity().x += slime.getMaxVelocity();
+						else
+							slime.getVelocity().x -= slime.getMaxVelocity();
+						if (slime.isGrounded()) slime.setState(Slime.State.WALK);
+						break;
+					case JUMPING:
+						// Randomly jump
+						if (Math.random() > 0.7 && slime.isGrounded()) {
+							slime.getVelocity().y += slime.getJumpVelocity();
+							slime.setState(Slime.State.JUMP);
+							slime.setGrounded(false);
+						}
+						break;
+				}
 			}
 			
 			slime.setStateTime(deltaTime + slime.getStateTime());
@@ -473,10 +475,12 @@ public class ParkourMaster extends Game {
 		Batch batch = renderer.getBatch();
 		batch.begin();
 		for(Slime slime : slimes) {
-			TextureRegion animation = null;
+			TextureRegion animation;
 
 			switch(slime.getState()) {
-				// TODO: Add separate animations for slime states
+				case DEAD:
+					animation = slimeDead;
+					break;
 				default:
 					animation = slimeWalk.getKeyFrame(slime.getStateTime());
 			}
