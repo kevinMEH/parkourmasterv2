@@ -42,6 +42,11 @@ public class Slime extends Enemy {
         MAX_VELOCITY = 6f;
     }
     
+    {
+        this.setDamage(120);
+        this.setHealthBasic(100);
+    }
+    
     @Override
     public void setPosition(Vector2 position) {
         lastPosition = position.x;
