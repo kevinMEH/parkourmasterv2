@@ -40,6 +40,17 @@ public class AgentPurple extends Entity {
         MAX_VELOCITY = 12f;
     }
     
+    {
+        this.setHealth(100);
+    }
+    
+    @Override
+    public void setHealth(int health) {
+        super.setHealthBasic(health);
+        if(getHealth() < 0) this.state = State.DEAD;
+        setTimeSinceLastDamage(0f);
+    }
+    
     enum State { IDLE, WALK, JUMP, DEAD, IDLE_SHOOT, WALK_SHOOT, JUMP_SHOOT }
 
     private State state = State.IDLE;

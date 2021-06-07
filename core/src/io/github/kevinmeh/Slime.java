@@ -55,4 +55,10 @@ public class Slime extends Enemy {
     private float lastPosition;
     void setLastPosition(float lastPosition) { this.lastPosition = lastPosition; }
     float getLastPosition() { return lastPosition; }
+    
+    public void setHealth(int health) {
+        super.setHealthBasic(health);
+        if(getHealth() < 0) this.setState(State.DEAD);
+        setTimeSinceLastDamage(0f);
+    }
 }

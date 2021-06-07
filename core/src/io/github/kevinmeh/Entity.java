@@ -43,4 +43,18 @@ abstract class Entity {
     private float stateTime = 0;
     public float getStateTime() { return stateTime; }
     public void setStateTime(float stateTime) { this.stateTime = stateTime; }
+    
+    // Cool down between damages so you don't instantly die when you touch something
+    private float timeSinceLastDamage = 100f;
+    public float getTimeSinceLastDamage() { return timeSinceLastDamage; }
+    public void setTimeSinceLastDamage(float time) { timeSinceLastDamage = time; }
+    
+    private int health = 100;
+    public int getHealth() { return health; }
+    void setHealthBasic(int health) { this.health = health; }
+    abstract public void setHealth(int health);
+    
+    private int damage;
+    public int getDamage() { return damage; }
+    void setDamage(int damage) { this.damage = damage; }
 }

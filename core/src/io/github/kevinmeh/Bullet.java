@@ -39,4 +39,14 @@ public class Bullet extends Entity {
         JUMP_VELOCITY = 0f;
         MAX_VELOCITY = 72f;
     }
+    
+    {
+        this.setDamage(120);
+        this.setHealthBasic(1000);
+    }
+
+    @Override
+    public void setHealth(int health) {
+        // Bullet has no health
+    }
 }
