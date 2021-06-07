@@ -144,6 +144,7 @@ public class ParkourMaster extends Game {
 		updateAgent(deltaTime);
 		updateSlime(deltaTime);
 		updateBullet(deltaTime);
+		calcDamages();
 		
 		updateCameraPosition();
 		
@@ -192,42 +193,44 @@ public class ParkourMaster extends Game {
 		if(deltaTime > 0.1f)
 			deltaTime = 0.1f;
 
+		agentPurple.setTimeSinceLastDamage(deltaTime + agentPurple.getTimeSinceLastDamage());
 		agentPurple.setStateTime(deltaTime + agentPurple.getStateTime());
 		agentPurple.setTimeSinceLastShot(agentPurple.getTimeSinceLastShot() + deltaTime);
 		
 		lastExecute = lastExecute + deltaTime;
 
-		// Checking input
-		if(agentPurple.isGrounded() && (Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isKeyPressed(Input.Keys.W))) {
-			agentPurple.getVelocity().y += agentPurple.getJumpVelocity();
-			agentPurple.setState(AgentPurple.State.JUMP);
-			agentPurple.setGrounded(false);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
-			agentPurple.getVelocity().x = agentPurple.getVelocity().x - agentPurple.getMaxVelocity();
-			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
-			agentPurple.setDirection(AgentPurple.Direction.LEFT);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
-			agentPurple.getVelocity().x = agentPurple.getVelocity().x + agentPurple.getMaxVelocity();
-			if(agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
-			agentPurple.setDirection(AgentPurple.Direction.RIGHT);
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.F)) {
-			if(agentPurple.getTimeSinceLastShot() > agentPurple.getFireRate())
-				fire();
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.B)) {
-			if(lastExecute > executeThreshold) {
-				debug = !debug;
-				lastExecute = 0f;
+		if(!agentPurple.isDead()) {
+			if (agentPurple.isGrounded() && (Gdx.input.isKeyPressed(Input.Keys.SPACE) || Gdx.input.isKeyPressed(Input.Keys.W))) {
+				agentPurple.getVelocity().y += agentPurple.getJumpVelocity();
+				agentPurple.setState(AgentPurple.State.JUMP);
+				agentPurple.setGrounded(false);
 			}
-		}
-		if(Gdx.input.isKeyPressed(Input.Keys.G)) {
-			if(lastExecute > executeThreshold) {
-				if (GRAVITY > -0.5f) GRAVITY = BACKUP_GRAVITY;
-				else GRAVITY = 0f;
-				lastExecute = 0f;
+			if (Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
+				agentPurple.getVelocity().x = agentPurple.getVelocity().x - agentPurple.getMaxVelocity();
+				if (agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
+				agentPurple.setDirection(AgentPurple.Direction.LEFT);
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) || Gdx.input.isKeyPressed(Input.Keys.D)) {
+				agentPurple.getVelocity().x = agentPurple.getVelocity().x + agentPurple.getMaxVelocity();
+				if (agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.WALK);
+				agentPurple.setDirection(AgentPurple.Direction.RIGHT);
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.F)) {
+				if (agentPurple.getTimeSinceLastShot() > agentPurple.getFireRate())
+					fire();
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.B)) {
+				if (lastExecute > executeThreshold) {
+					debug = !debug;
+					lastExecute = 0f;
+				}
+			}
+			if (Gdx.input.isKeyPressed(Input.Keys.G)) {
+				if (lastExecute > executeThreshold) {
+					if (GRAVITY > -0.5f) GRAVITY = BACKUP_GRAVITY;
+					else GRAVITY = 0f;
+					lastExecute = 0f;
+				}
 			}
 		}
 		
@@ -292,6 +295,9 @@ public class ParkourMaster extends Game {
 			deltaTime = 0.1f;
 		
 		for(Slime slime : slimes) {
+			slime.setStateTime(deltaTime + slime.getStateTime());
+			slime.setTimeSinceLastDamage(deltaTime + slime.getTimeSinceLastDamage());
+			
 			// Movement
 			if(slime.getState() != Enemy.State.DEAD) {
 				switch (slime.getMovementType()) {
@@ -316,8 +322,6 @@ public class ParkourMaster extends Game {
 						break;
 				}
 			}
-			
-			slime.setStateTime(deltaTime + slime.getStateTime());
 			
 			slime.getVelocity().add(0, GRAVITY);
 			
@@ -404,13 +408,6 @@ public class ParkourMaster extends Game {
 			
 			bullet.getVelocity().scl(deltaTime);
 			
-			// Kills slime if overlaps with slime collision box
-			for(Slime slime : slimes) {
-				if(slime.getCollisionBox().overlaps(bullet.getCollisionBox())) {
-					slime.setState(Enemy.State.DEAD);
-				}
-			}
-			
 			// Collision checking
 			
 			Rectangle xTile = xCollides(bullet, getXTiles(bullet));
@@ -422,6 +419,21 @@ public class ParkourMaster extends Game {
 			
 			bullet.getPosition().add(bullet.getVelocity());
 			bullet.getVelocity().scl(1 / deltaTime);
+		}
+	}
+	
+	void calcDamages() {
+		for(Bullet bullet : bullets) {
+			for (Slime slime : slimes) {
+				if (slime.getCollisionBox().overlaps(bullet.getCollisionBox()) && slime.getTimeSinceLastDamage() > 0.5f) {
+					slime.setHealth(slime.getHealth() - bullet.getDamage());
+				}
+			}
+		}
+		for(Slime slime : slimes) {
+			if(!slime.isDead() && slime.getCollisionBox().overlaps(agentPurple.getCollisionBox()) && agentPurple.getTimeSinceLastDamage() > 0.5f) {
+				agentPurple.setHealth(agentPurple.getHealth() - slime.getDamage());
+			}
 		}
 	}
 	
