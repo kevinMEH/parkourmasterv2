@@ -543,7 +543,13 @@ public class ParkourMaster extends Game {
 				break;
 			case DEAD:
 				animation = agentPurpleDeadFrame;
-				break;
+				if(agentPurple.getDirection() == AgentPurple.Direction.RIGHT) {
+					batch.draw(animation, agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
+				} else {
+					batch.draw(animation, agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
+				}
+				batch.end();
+				return;
 		}
 		
 		if(agentPurple.getDirection() == AgentPurple.Direction.RIGHT) {
