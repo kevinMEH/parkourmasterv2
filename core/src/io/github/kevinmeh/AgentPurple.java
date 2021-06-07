@@ -58,8 +58,10 @@ public class AgentPurple extends Entity {
         return state; 
     }
     public void setState(State state) {
+        if(isDead()) return;
         this.state = state;
     }
+    boolean isDead() { return state == State.DEAD; }
     
     private float timeSinceLastShot = 10f;
     float getTimeSinceLastShot() { return timeSinceLastShot; }
