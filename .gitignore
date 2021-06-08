@@ -117,3 +117,5 @@ Thumbs.db
 # Default ignored files
 /shelf/
 /workspace.xml
+
+!/html/build
