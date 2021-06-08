@@ -1,0 +1,94 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "stage1.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "background.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 4
+        },
+        "environment.tsx": {
+            "scaleInDock": 11,
+            "scaleInEditor": 4
+        },
+        "environmentv2.tsx": {
+            "scaleInDock": 5.5,
+            "scaleInEditor": 4
+        },
+        "level1.tmx": {
+            "scale": 3,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 92.33333333333333,
+                "y": 71.66666666666667
+            }
+        },
+        "level1.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "level1alt.tmx": {
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 193.5,
+                "y": 98.5
+            }
+        },
+        "sky.tsx": {
+            "scaleInDock": 1.5,
+            "scaleInEditor": 3
+        },
+        "skyv2.tsx": {
+            "scaleInDock": 0.75,
+            "scaleInEditor": 1
+        },
+        "stage1.tmx": {
+            "scale": 5.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 336.6363636363636,
+                "y": 114.18181818181817
+            }
+        }
+    },
+    "last.externalTilesetPath": "D:/kevin/Documents/Projects/School/AP Computer Science A/parkourmaster/maps",
+    "last.imagePath": "D:/kevin/Documents/Projects/School/AP Computer Science A/parkourmasterv2/core/assets/maps",
+    "map.height": 50,
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 4,
+    "map.tileWidth": 4,
+    "map.width": 150,
+    "openFiles": [
+        "stage1.tmx",
+        "skyv2.tsx"
+    ],
+    "project": "parkourmaster.tiled-project",
+    "property.type": "int",
+    "recentFiles": [
+        "skyv2.tsx",
+        "stage1.tmx",
+        "sky.tsx",
+        "environment.tsx",
+        "background.tsx",
+        "environmentv2.tsx",
+        "level1.tmx",
+        "level1alt.tmx",
+        "level1.tsx"
+    ],
+    "resizeMap.removeObjects": false,
+    "tileset.lastUsedFilter": "Tiled tileset files (*.tsx *.xml)",
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 4,
+        "width": 4
+    }
+}
