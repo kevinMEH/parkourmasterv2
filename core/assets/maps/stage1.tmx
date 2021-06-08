@@ -118,10 +118,10 @@
    </properties>
    <point/>
   </object>
-  <object id="12" name="spawn" x="96" y="156">
+  <object id="12" name="spawn" x="96" y="144">
    <properties>
     <property name="x" type="int" value="96"/>
-    <property name="y" type="int" value="156"/>
+    <property name="y" type="int" value="144"/>
    </properties>
    <point/>
   </object>
