@@ -73,7 +73,7 @@ com_crashlytics_export_strings.xml
 /html/nbbuild/
 /ios/nbbuild/
 
-!/dist/
+!/docs/
 /android/dist/
 /core/dist/
 /desktop/dist/
