@@ -65,17 +65,8 @@ public class ParkourMaster extends Game {
 
 	private static boolean debug = false;
 	private ShapeRenderer debugRenderer;
-
-	public ParkourMaster(boolean mobile) {
-		if(mobile) {
-			GRAVITY = GRAVITY / 2.5f;
-			AgentPurple.setMaxVelocity(13f);
-		}
-	}
 	
-	public ParkourMaster() {  }
-	
-	static float GRAVITY = -1.3f;
+	static float GRAVITY = -78f;
 
 	static final float TILE_SIZE = 4f;
 
@@ -147,7 +138,6 @@ public class ParkourMaster extends Game {
 		ScreenUtils.clear(1.0f, 1.0f, 1.0f, 1);
 
 		float deltaTime = Gdx.graphics.getDeltaTime();
-		System.out.println(deltaTime);
 
 		// Input, collision, position
 		updateAgent(deltaTime);
@@ -233,7 +223,7 @@ public class ParkourMaster extends Game {
 			}
 		}
 
-		agentPurple.getVelocity().add(0, GRAVITY);
+		agentPurple.getVelocity().add(0, GRAVITY * deltaTime);
 
 		agentPurple.getVelocity().x = MathUtils.clamp(agentPurple.getVelocity().x, -agentPurple.getMaxVelocity(), agentPurple.getMaxVelocity());
 
@@ -322,7 +312,7 @@ public class ParkourMaster extends Game {
 				}
 			}
 
-			slime.getVelocity().add(0, GRAVITY);
+			slime.getVelocity().add(0, GRAVITY * deltaTime);
 
 			slime.getVelocity().x = MathUtils.clamp(slime.getVelocity().x, -slime.getMaxVelocity(), slime.getMaxVelocity());
 
@@ -524,7 +514,6 @@ public class ParkourMaster extends Game {
 			}
 			batch.end();
 			if(agentPurpleShoot.isAnimationFinished(deltaTime)) {
-				System.out.println("Animation finished");
 				agentPurple.setState(AgentPurple.State.IDLE);
 			}
 			return;

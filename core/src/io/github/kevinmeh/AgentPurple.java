@@ -10,7 +10,6 @@ public class AgentPurple extends Entity {
     public float getDrawHeight() { return DRAW_HEIGHT; }
     public float getJumpVelocity() { return JUMP_VELOCITY; }
     public float getMaxVelocity() { return MAX_VELOCITY; }
-    static void setMaxVelocity(float MAX_VELOCITY) { AgentPurple.MAX_VELOCITY = MAX_VELOCITY; }
     public float getDamping() { return DAMPING; }
 
     // Collision box WIDTH and HEIGHT
@@ -38,7 +37,7 @@ public class AgentPurple extends Entity {
         HEIGHT_DIFF = 0f;
 
         JUMP_VELOCITY = 27f;
-        MAX_VELOCITY = 12f;
+        MAX_VELOCITY = 13f;
     }
     
     {
