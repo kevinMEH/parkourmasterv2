@@ -37,24 +37,24 @@ public class ParkourMaster extends Game {
 	private OrthographicCamera camera;
 	private float mapHeight;
 	private float mapWidth;
-	
+
 	private AgentPurple agentPurple;
 	private ArrayList<Slime> slimes = new ArrayList<>();
 	private ArrayList<Bullet> bullets = new ArrayList<>();
-	
+
 	private Animation<TextureRegion> agentPurpleIdle;
 	private Animation<TextureRegion> agentPurpleWalk;
 	private Animation<TextureRegion> agentPurpleShoot;
 	private TextureRegion agentPurpleDeadFrame;
 	// TODO: Add jumping animation
-	
+
 	private Animation<TextureRegion> slimeWalk;
 	private TextureRegion slimeDead;
-	
+
 	private TextureRegion bulletFrame;
-	
+
 	private Sound fireSound;
-	
+
 	private Pool<Rectangle> rectanglePool = new Pool<Rectangle>() {
 		@Override
 		protected Rectangle newObject() {
@@ -62,34 +62,42 @@ public class ParkourMaster extends Game {
 		}
 	};
 	private Array<Rectangle> tiles = new Array<>();
-	
+
 	private static boolean debug = false;
 	private ShapeRenderer debugRenderer;
+
+	public ParkourMaster(boolean mobile) {
+		if(mobile) {
+			GRAVITY = GRAVITY / 2.5f;
+			AgentPurple.setMaxVelocity(13f);
+		}
+	}
+	
+	public ParkourMaster() {  }
 	
 	static float GRAVITY = -1.3f;
-	static float BACKUP_GRAVITY = -1.3f;
-	
+
 	static final float TILE_SIZE = 4f;
-	
+
 	@Override
 	public void create() {
 		// NOTE: 1 Unit = 8 Pixels
 		map = new TmxMapLoader().load("maps/stage1.tmx");
 		renderer = new OrthogonalTiledMapRenderer(map, 1 / TILE_SIZE);
-		mapWidth = map.getProperties().get("width", Integer.class);
-		mapHeight = map.getProperties().get("height", Integer.class);
+		mapWidth = (float) map.getProperties().get("width", Integer.class);
+		mapHeight = (float) map.getProperties().get("height", Integer.class);
 		MapLayer objectLayer = map.getLayers().get("entities");
 		objects = objectLayer.getObjects();
 
 		initialize();
-		
+
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 32, 18);
 		camera.update();
-		
+
 		debugRenderer = new ShapeRenderer();
 	}
-	
+
 	void initialize() {
 		Texture texture = new Texture("sprites/agentPurple.png");
 		TextureRegion[] textureRegion = TextureRegion.split(texture, 25, 22)[0];
@@ -100,26 +108,26 @@ public class ParkourMaster extends Game {
 		agentPurpleShoot = new Animation<>(0.15f, textureRegion[6], textureRegion[7], textureRegion[8]);
 		agentPurpleShoot.setPlayMode(Animation.PlayMode.NORMAL);
 		agentPurpleDeadFrame = textureRegion[9];
-		
+
 		Texture slimeTexture = new Texture("sprites/slime.png");
 		TextureRegion[] slimeTextureRegion = TextureRegion.split(slimeTexture, 22, 13)[0];
 		slimeWalk = new Animation<>(0.4f, slimeTextureRegion[0], slimeTextureRegion[1]);
 		slimeWalk.setPlayMode(Animation.PlayMode.LOOP);
 		slimeDead = slimeTextureRegion[2];
-		
+
 		Texture bulletTexture = new Texture("sprites/bullet.png");
 		bulletFrame = TextureRegion.split(bulletTexture, 4, 3)[0][0];
-		
+
 		fireSound = Gdx.audio.newSound(Gdx.files.internal("sounds/pistol.mp3"));
 
 		agentPurple = new AgentPurple();
 		agentPurple.setPosition(
 				new Vector2(
-						(Integer) objects.get("spawn").getProperties().get("x") / TILE_SIZE, 
+						(Integer) objects.get("spawn").getProperties().get("x") / TILE_SIZE,
 						mapHeight - (Integer) objects.get("spawn").getProperties().get("y") / TILE_SIZE
 				)
 		);
-		
+
 		// Initializes slime1 through slime4 and adds to slimes
 		for(int i = 1; i < 4; i++) {
 			Slime slime = new Slime();
@@ -137,28 +145,29 @@ public class ParkourMaster extends Game {
 	@Override
 	public void render() {
 		ScreenUtils.clear(1.0f, 1.0f, 1.0f, 1);
-		
+
 		float deltaTime = Gdx.graphics.getDeltaTime();
-		
+		System.out.println(deltaTime);
+
 		// Input, collision, position
 		updateAgent(deltaTime);
 		updateSlime(deltaTime);
 		updateBullet(deltaTime);
 		calcDamages();
-		
+
 		updateCameraPosition();
-		
+
 		// TiledMapRenderer based on what camera sees. Render map.
 		renderer.setView(camera);
 		renderer.render();
-		
+
 		renderAgent(deltaTime);
 		renderSlime(deltaTime);
 		renderBullet(deltaTime);
-		
+
 		if(debug) renderDebug();
 	}
-	
+
 	void updateCameraPosition() {
 		camera.position.x = agentPurple.getPosition().x;
 		camera.position.y = agentPurple.getPosition().y + 2;
@@ -190,13 +199,10 @@ public class ParkourMaster extends Game {
 	public void updateAgent(float deltaTime) {
 		if(deltaTime == 0) return;
 
-		if(deltaTime > 0.1f)
-			deltaTime = 0.1f;
-
 		agentPurple.setTimeSinceLastDamage(deltaTime + agentPurple.getTimeSinceLastDamage());
 		agentPurple.setStateTime(deltaTime + agentPurple.getStateTime());
 		agentPurple.setTimeSinceLastShot(agentPurple.getTimeSinceLastShot() + deltaTime);
-		
+
 		lastExecute = lastExecute + deltaTime;
 
 		if(!agentPurple.isDead()) {
@@ -225,32 +231,25 @@ public class ParkourMaster extends Game {
 					lastExecute = 0f;
 				}
 			}
-			if (Gdx.input.isKeyPressed(Input.Keys.G)) {
-				if (lastExecute > executeThreshold) {
-					if (GRAVITY > -0.5f) GRAVITY = BACKUP_GRAVITY;
-					else GRAVITY = 0f;
-					lastExecute = 0f;
-				}
-			}
 		}
-		
+
 		agentPurple.getVelocity().add(0, GRAVITY);
-		
+
 		agentPurple.getVelocity().x = MathUtils.clamp(agentPurple.getVelocity().x, -agentPurple.getMaxVelocity(), agentPurple.getMaxVelocity());
-		
+
 		if(Math.abs(agentPurple.getVelocity().x) < 0.25f) {
 			agentPurple.getVelocity().x = 0;
 			if(agentPurple.isNotShooting() && agentPurple.isGrounded()) agentPurple.setState(AgentPurple.State.IDLE);
 		}
-		
+
 		agentPurple.getVelocity().scl(deltaTime);
-		
+
 		// Collision detection and response
-		
+
 		// Checks the direction agent is moving and find collision boxes and compare it with agent's bounding box.
 		Rectangle xTile = xCollides(agentPurple, getXTiles(agentPurple));
 		if(xTile != null) agentPurple.getVelocity().x = 0;
-		
+
 		// Up down collision checking
 		Rectangle yTile = yCollides(agentPurple, getYTiles(agentPurple));
 		if(yTile != null) {
@@ -262,14 +261,14 @@ public class ParkourMaster extends Game {
 			}
 			agentPurple.getVelocity().y = 0;
 		}
-		
+
 		// unscale velocity
 		agentPurple.getPosition().add(agentPurple.getVelocity());
 		agentPurple.getVelocity().scl(1 / deltaTime);
-		
+
 		agentPurple.getVelocity().x *= agentPurple.getDamping();
 	}
-	
+
 	void fire() {
 		agentPurple.setTimeSinceLastShot(0f);
 		agentPurple.setState(AgentPurple.State.IDLE_SHOOT);
@@ -287,17 +286,17 @@ public class ParkourMaster extends Game {
 		bullets.add(bullet);
 		fireSound.play(0.2f);
 	}
-	
+
 	void updateSlime(float deltaTime) {
 		if(deltaTime == 0) return;
 
 		if(deltaTime > 0.1f)
 			deltaTime = 0.1f;
-		
+
 		for(Slime slime : slimes) {
 			slime.setStateTime(deltaTime + slime.getStateTime());
 			slime.setTimeSinceLastDamage(deltaTime + slime.getTimeSinceLastDamage());
-			
+
 			// Movement
 			if(slime.getState() != Enemy.State.DEAD) {
 				switch (slime.getMovementType()) {
@@ -322,15 +321,15 @@ public class ParkourMaster extends Game {
 						break;
 				}
 			}
-			
+
 			slime.getVelocity().add(0, GRAVITY);
-			
+
 			slime.getVelocity().x = MathUtils.clamp(slime.getVelocity().x, -slime.getMaxVelocity(), slime.getMaxVelocity());
-			
+
 			slime.getVelocity().scl(deltaTime);
-			
+
 			// Collision checking
-			
+
 			// X collision checking if PATROL or FREE
 			if(slime.getMovementType() == Enemy.MovementType.PATROL || slime.getMovementType() == Enemy.MovementType.FREE) {
 				Rectangle xTile = xCollides(slime, getXTiles(slime));
@@ -360,7 +359,7 @@ public class ParkourMaster extends Game {
 							}
 					}
 				}
-				
+
 				if(slime.getMovementType() == Enemy.MovementType.PATROL) {
 					TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("foreground");
 					Cell edgeTile;
@@ -376,7 +375,7 @@ public class ParkourMaster extends Game {
 					}
 				}
 			}
-			
+
 			// Y collision checking
 			Rectangle yTile = yCollides(slime, getYTiles(slime));
 			if(yTile != null) {
@@ -388,40 +387,40 @@ public class ParkourMaster extends Game {
 				}
 				slime.getVelocity().y = 0;
 			}
-			
+
 			slime.getPosition().add(slime.getVelocity());
 			slime.getVelocity().scl(1 / deltaTime);
-			
+
 			slime.getVelocity().x *= slime.getDamping();
 		}
 	}
-	
+
 	void updateBullet(float deltaTime) {
 		if(deltaTime == 0) return;
-		
+
 		if(deltaTime > 0.1f)
 			deltaTime = 0.1f;
-		
+
 		for(int i = 0; i < bullets.size(); i++) {
 			Bullet bullet = bullets.get(i);
 			bullet.setStateTime(deltaTime + bullet.getStateTime());
-			
+
 			bullet.getVelocity().scl(deltaTime);
-			
+
 			// Collision checking
-			
+
 			Rectangle xTile = xCollides(bullet, getXTiles(bullet));
 			if(xTile != null) {
 				bullet.getVelocity().x = 0;
 				bullets.remove(bullet);
 				i--;
 			}
-			
+
 			bullet.getPosition().add(bullet.getVelocity());
 			bullet.getVelocity().scl(1 / deltaTime);
 		}
 	}
-	
+
 	void calcDamages() {
 		for(Bullet bullet : bullets) {
 			for (Slime slime : slimes) {
@@ -436,10 +435,10 @@ public class ParkourMaster extends Game {
 			}
 		}
 	}
-	
+
 	Array<Rectangle> getXTiles(Entity entity) {
 		int startX, startY, endX, endY;
-		
+
 		if(entity.getVelocity().x > 0) {
 			startX = endX = (int) (entity.getPosition().x + entity.getCollisionWidth() + entity.getVelocity().x);
 		} else {
@@ -451,7 +450,7 @@ public class ParkourMaster extends Game {
 		getTiles(startX, startY, endX, endY, tiles);
 		return tiles;
 	}
-	
+
 	// Returns true if collides in the x direction
 	Rectangle xCollides(Entity entity, Array<Rectangle> tiles) {
 		Rectangle entityRect = rectanglePool.obtain();
@@ -466,10 +465,10 @@ public class ParkourMaster extends Game {
 		rectanglePool.free(entityRect);
 		return null;
 	}
-	
+
 	Array<Rectangle> getYTiles(Entity entity) {
 		int startX, startY, endX, endY;
-		
+
 		if(entity.getVelocity().y > 0) {
 			startY = endY = (int) (entity.getPosition().y + entity.getCollisionHeight() + entity.getVelocity().y);
 		} else {
@@ -480,7 +479,7 @@ public class ParkourMaster extends Game {
 		getTiles(startX, startY, endX, endY, tiles);
 		return tiles;
 	}
-	
+
 	Rectangle yCollides(Entity entity, Array<Rectangle> tiles) {
 		Rectangle entityRect = rectanglePool.obtain();
 		entityRect.set(entity.getPosition().x, entity.getPosition().y, entity.getCollisionWidth(), entity.getCollisionHeight());
@@ -494,7 +493,7 @@ public class ParkourMaster extends Game {
 		rectanglePool.free(entityRect);
 		return null;
 	}
-	
+
 	private void getTiles(int startX, int startY, int endX, int endY, Array<Rectangle> tiles) {
 		// Gets all tiles of layer "foreground" where all the collision boxes are supposed to be.
 		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("foreground");
@@ -530,7 +529,7 @@ public class ParkourMaster extends Game {
 			}
 			return;
 		}
-		
+
 		switch(agentPurple.getState()) {
 			case IDLE:
 				animation = agentPurpleIdle.getKeyFrame(agentPurple.getStateTime());
@@ -551,7 +550,7 @@ public class ParkourMaster extends Game {
 				batch.end();
 				return;
 		}
-		
+
 		if(agentPurple.getDirection() == AgentPurple.Direction.RIGHT) {
 			batch.draw(animation, agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
 		} else {
@@ -573,7 +572,7 @@ public class ParkourMaster extends Game {
 				default:
 					animation = slimeWalk.getKeyFrame(slime.getStateTime());
 			}
-			
+
 			if(slime.getDirection() == Entity.Direction.RIGHT) {
 				batch.draw(animation, slime.getDrawPosition().x, slime.getDrawPosition().y, slime.getDrawWidth(), slime.getDrawHeight());
 			} else {
@@ -582,7 +581,7 @@ public class ParkourMaster extends Game {
 		}
 		batch.end();
 	}
-	
+
 	void renderBullet(float deltaTime) {
 		Batch batch = renderer.getBatch();
 		batch.begin();
@@ -595,19 +594,19 @@ public class ParkourMaster extends Game {
 		}
 		batch.end();
 	}
-	
+
 	private void renderDebug() {
 		debugRenderer.setProjectionMatrix(camera.combined);
 		debugRenderer.begin(ShapeRenderer.ShapeType.Line);
-		
+
 		// Draw box
 		debugRenderer.setColor(Color.RED);
 		debugRenderer.rect(agentPurple.getDrawPosition().x, agentPurple.getDrawPosition().y, agentPurple.getDrawWidth(), agentPurple.getDrawHeight());
-		
+
 		// Collision box
 		debugRenderer.setColor(Color.CORAL);
 		debugRenderer.rect(agentPurple.getPosition().x, agentPurple.getPosition().y, agentPurple.getCollisionWidth(), agentPurple.getCollisionHeight());
-		
+
 		debugRenderer.setColor(Color.BLUE);
 		TiledMapTileLayer layer = (TiledMapTileLayer) map.getLayers().get("foreground");
 		for(int y = 0; y <= layer.getHeight(); y++) {
