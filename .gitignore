@@ -73,7 +73,7 @@ com_crashlytics_export_strings.xml
 /html/nbbuild/
 /ios/nbbuild/
 
-/dist/
+!/dist/
 /android/dist/
 /core/dist/
 /desktop/dist/
@@ -117,5 +117,3 @@ Thumbs.db
 # Default ignored files
 /shelf/
 /workspace.xml
-
-!/html/build
