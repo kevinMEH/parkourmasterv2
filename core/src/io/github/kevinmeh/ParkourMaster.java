@@ -120,7 +120,7 @@ public class ParkourMaster extends Game {
 		);
 
 		// Initializes slime1 through slime4 and adds to slimes
-		for(int i = 1; i < 4; i++) {
+		for(int i = 1; i < 5; i++) {
 			Slime slime = new Slime();
 			slime.setPosition(
 					new Vector2(
