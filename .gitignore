@@ -121,4 +121,4 @@ Thumbs.db
 /html/build
 /html/build/dist
 
-.tiled-session
+/core/assets/maps/parkourmaster.tiled-session
