@@ -8,7 +8,7 @@ Read what happened to v1 [here.](https://github.com/kevinMEH/parkourmaster)
 
 All textures are made by me. Feel free to reuse in your own projects.
 
-Won 2nd best project in the class for MP4.
+Won 2nd best project in the class for MP4. 🎉
 
 ## [Play The Game Here](https://kevinmeh.github.io/parkourmasterv2)
 
