@@ -8,6 +8,8 @@ Read what happened to v1 [here.](https://github.com/kevinMEH/parkourmaster)
 
 All textures are made by me. Feel free to reuse in your own projects.
 
+Won 2nd best project in the class for MP4.
+
 ## [Play The Game Here](https://kevinmeh.github.io/parkourmasterv2)
 
 NOTE: The browser version is different from the desktop version. For some reason, the gravity and speed is a bit off. I made adjustments to the HTML version, but it is not perfect.
