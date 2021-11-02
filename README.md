@@ -1,14 +1,10 @@
 # Parkour Master v2
 
-By: Kevin from Brooklyn Technical High School
-
 Parkour Master is a 2D platformer parkour game where you control Agent Purple and help him get to his objective.
 
 Read what happened to v1 [here.](https://github.com/kevinMEH/parkourmaster)
 
 All textures are made by me. Feel free to reuse in your own projects.
-
-Won 2nd best project in the class for MP4. 🎉
 
 ## [Play The Game Here](https://kevinmeh.github.io/parkourmasterv2)
 
